@@ -4,6 +4,11 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "player"
     },
+    "image2": {
+        "data": "hwQBAAEAAAAAAAAA",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "blank_px"
+    },
     "*": {
         "mimeType": "image/x-mkcd-f4",
         "dataEncoding": "base64",

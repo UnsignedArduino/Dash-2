@@ -22,6 +22,10 @@ namespace myImages {
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 `;
+            case "image2":
+            case "blank_px":return img`
+. 
+`;
         }
         return null;
     })
