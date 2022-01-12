@@ -3,7 +3,8 @@
     "description": "",
     "dependencies": {
         "device": "*",
-        "tilemaps": "github:microsoft/pxt-tilemaps#v1.12.0"
+        "tilemaps": "github:microsoft/pxt-tilemaps#v1.12.0",
+        "arcade-sprite-util": "github:jwunderl/arcade-sprite-util#v0.2.4"
     },
     "files": [
         "main.blocks",
