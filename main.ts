@@ -2,6 +2,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_left`, function (sprit
     destroy_if_on_tile(sprite, assets.tile`spikes_left`)
 })
 function set_level (level_num: number) {
+    curr_level = level_num
     scene.setBackgroundColor(13)
     tiles.loadMap(tiles.copyMap(all_levels[0]))
     for (let tile of [assets.tile`block`, assets.tile`upper_slab`, assets.tile`lower_slab`]) {
@@ -39,7 +40,15 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_right0`, function (spr
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_up0`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_up0`)
 })
+sprites.onDestroyed(SpriteKind.Player, function (sprite) {
+    timer.after(500, function () {
+        set_level(curr_level)
+        make_player()
+        prepare_tilemap()
+    })
+})
 let sprite_player: Sprite = null
+let curr_level = 0
 let all_levels: tiles.WorldMap[] = []
 all_levels = [tiles.createSmallMap(tilemap`level_1`)]
 set_level(0)
