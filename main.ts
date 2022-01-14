@@ -1,3 +1,8 @@
+scene.onHitWall(SpriteKind.Player, function (sprite, location) {
+    if (sprite.isHittingTile(CollisionDirection.Bottom)) {
+        jump_count = 0
+    }
+})
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_left`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_left`)
 })
@@ -12,7 +17,10 @@ function set_level (level_num: number) {
     }
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    spriteutils.jumpImpulse(sprite_player, 26)
+    if (jump_count < MAX_JUMPS) {
+        spriteutils.jumpImpulse(sprite_player, 26)
+        jump_count += 1
+    }
 })
 function prepare_tilemap () {
     tiles.setTileAt(tiles.getTilesByType(assets.tile`start_tile`)[0], assets.tile`transparency8`)
@@ -41,7 +49,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_up0`, function (sprite
     destroy_if_on_tile(sprite, assets.tile`spikes_up0`)
 })
 sprites.onDestroyed(SpriteKind.Player, function (sprite) {
-    timer.after(500, function () {
+    timer.after(1000, function () {
         set_level(curr_level)
         make_player()
         prepare_tilemap()
@@ -50,6 +58,10 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
 let sprite_player: Sprite = null
 let curr_level = 0
 let all_levels: tiles.WorldMap[] = []
+let jump_count = 0
+let MAX_JUMPS = 0
+MAX_JUMPS = 2
+jump_count = 0
 all_levels = [tiles.createSmallMap(tilemap`level_1`)]
 set_level(0)
 make_player()
