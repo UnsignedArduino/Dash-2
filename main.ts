@@ -20,6 +20,12 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (jump_count < MAX_JUMPS) {
         spriteutils.jumpImpulse(sprite_player, 26)
         jump_count += 1
+        timer.background(function () {
+            for (let image2 of player_rotations) {
+                sprite_player.setImage(image2)
+                pause(20)
+            }
+        })
     }
 })
 function prepare_tilemap () {
@@ -41,6 +47,8 @@ function make_player () {
     sprite_player.ay = 500
     tiles.placeOnRandomTile(sprite_player, assets.tile`start_tile`)
     scene.cameraFollowSprite(sprite_player)
+    player_rotations = scaling.createRotations(sprite_player.image, 10)
+    player_rotations.push(assets.image`player`)
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_right0`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_right0`)
@@ -55,6 +63,7 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
         prepare_tilemap()
     })
 })
+let player_rotations: Image[] = []
 let sprite_player: Sprite = null
 let curr_level = 0
 let all_levels: tiles.WorldMap[] = []

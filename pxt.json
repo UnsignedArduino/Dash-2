@@ -5,7 +5,8 @@
         "device": "*",
         "tilemaps": "github:microsoft/pxt-tilemaps#v1.12.0",
         "arcade-sprite-util": "github:jwunderl/arcade-sprite-util#v0.2.4",
-        "Timers": "github:microsoft/arcade-timers#v1.1.0"
+        "Timers": "github:microsoft/arcade-timers#v1.1.0",
+        "pxt-scaling": "github:jwunderl/pxt-scaling#v0.1.0"
     },
     "files": [
         "main.blocks",
