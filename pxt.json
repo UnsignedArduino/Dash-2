@@ -8,7 +8,8 @@
         "Timers": "github:microsoft/arcade-timers#v1.1.0",
         "pxt-scaling": "github:jwunderl/pxt-scaling#v0.1.0",
         "Stats": "github:UnsignedArduino/Stats#9102333e1ca6cbaf8a979ceb252274b2f09b9005",
-        "block-menu": "github:riknoll/arcade-custom-menu#v0.0.1"
+        "block-menu": "github:riknoll/arcade-custom-menu#v0.0.1",
+        "pxt-status-bar": "github:jwunderl/pxt-status-bar#v0.4.1"
     },
     "files": [
         "main.blocks",

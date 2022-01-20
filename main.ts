@@ -1,3 +1,6 @@
+namespace StatusBarKind {
+    export const Progress = StatusBarKind.create()
+}
 scene.onHitWall(SpriteKind.Player, function (sprite, location) {
     if (sprite.isHittingTile(CollisionDirection.Bottom)) {
         jump_count = 0
@@ -70,9 +73,23 @@ function wait_for_select () {
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_up0`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_up0`)
 })
+function make_map_progress_bar () {
+    sprite_map_progress = statusbars.create(scene.screenWidth() - 4, 4, StatusBarKind.Progress)
+    sprite_map_progress.value = 0
+    sprite_map_progress.max = tiles.tilemapColumns() * tiles.tileWidth()
+    sprite_map_progress.setColor(12, 11)
+    sprite_map_progress.setBarBorder(1, 12)
+    sprite_map_progress.top = 2
+    sprite_map_progress.left = 2
+    sprite_map_progress.setFlag(SpriteFlag.Ghost, true)
+    sprite_map_progress.setFlag(SpriteFlag.RelativeToCamera, true)
+    sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
+}
 sprites.onDestroyed(SpriteKind.Player, function (sprite) {
     timer.after(1000, function () {
         in_game = false
+        sprite_map_progress.value = sprite_player_hitbox.right
+        sprite_map_progress.setFlag(SpriteFlag.Invisible, false)
         blockMenu.showMenu(["Try again", "Exit"], MenuStyle.List, MenuLocation.BottomHalf)
         wait_for_select()
         blockMenu.closeMenu()
@@ -82,11 +99,13 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
             prepare_tilemap()
             in_game = true
         }
+        sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
     })
 })
 blockMenu.onMenuOptionSelected(function (option, index) {
     menu_selected = true
 })
+let sprite_map_progress: StatusBarSprite = null
 let menu_selected = false
 let sprite_player_hitbox: Sprite = null
 let curr_level = 0
@@ -105,6 +124,7 @@ blockMenu.setColors(12, 11)
 set_level(0)
 make_player()
 make_player_image()
+make_map_progress_bar()
 prepare_tilemap()
 in_game = true
 game.onUpdate(function () {
