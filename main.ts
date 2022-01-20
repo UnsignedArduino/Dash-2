@@ -61,16 +61,33 @@ function make_player () {
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_right0`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_right0`)
 })
+function wait_for_select () {
+    menu_selected = false
+    while (!(menu_selected)) {
+        pause(1)
+    }
+}
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_up0`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_up0`)
 })
 sprites.onDestroyed(SpriteKind.Player, function (sprite) {
     timer.after(1000, function () {
-        set_level(curr_level)
-        make_player()
-        prepare_tilemap()
+        in_game = false
+        blockMenu.showMenu(["Try again", "Exit"], MenuStyle.List, MenuLocation.BottomHalf)
+        wait_for_select()
+        blockMenu.closeMenu()
+        if (blockMenu.selectedMenuIndex() == 0) {
+            set_level(curr_level)
+            make_player()
+            prepare_tilemap()
+            in_game = true
+        }
     })
 })
+blockMenu.onMenuOptionSelected(function (option, index) {
+    menu_selected = true
+})
+let menu_selected = false
 let sprite_player_hitbox: Sprite = null
 let curr_level = 0
 let player_rotations: Image[] = []
@@ -84,6 +101,7 @@ MAX_JUMPS = 2
 jump_count = 0
 all_levels = [tiles.createSmallMap(tilemap`level_1`)]
 in_game = false
+blockMenu.setColors(12, 11)
 set_level(0)
 make_player()
 make_player_image()
