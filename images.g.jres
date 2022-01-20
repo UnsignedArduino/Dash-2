@@ -14,6 +14,11 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "player_hitbox"
     },
+    "image4": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwd3d3d3d3d3B3dwcAAAAAcHd3BwAAAAAAd3cAAAAAAAB3dwAAAAAAAHd3AAAAAAAAd3cAAAAAAAB3dwAAAAAAAHAHAAAAAAAAcAcAAAAAAABwBwAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "flag"
+    },
     "*": {
         "mimeType": "image/x-mkcd-f4",
         "dataEncoding": "base64",

@@ -1,3 +1,6 @@
+namespace SpriteKind {
+    export const End = SpriteKind.create()
+}
 namespace StatusBarKind {
     export const Progress = StatusBarKind.create()
 }
@@ -42,6 +45,9 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 function prepare_tilemap () {
     tiles.setTileAt(tiles.getTilesByType(assets.tile`start_tile`)[0], assets.tile`transparency8`)
+    sprite_flag = sprites.create(assets.image`flag`, SpriteKind.End)
+    tiles.placeOnRandomTile(sprite_flag, assets.tile`end_tile`)
+    tiles.setTileAt(tiles.getTilesByType(assets.tile`end_tile`)[0], assets.tile`transparency8`)
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_down0`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_down0`)
@@ -107,6 +113,7 @@ blockMenu.onMenuOptionSelected(function (option, index) {
 })
 let sprite_map_progress: StatusBarSprite = null
 let menu_selected = false
+let sprite_flag: Sprite = null
 let sprite_player_hitbox: Sprite = null
 let curr_level = 0
 let player_rotations: Image[] = []
