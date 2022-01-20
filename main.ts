@@ -17,15 +17,17 @@ function set_level (level_num: number) {
     }
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (jump_count < MAX_JUMPS) {
-        spriteutils.jumpImpulse(sprite_player, 26)
-        jump_count += 1
-        timer.background(function () {
-            for (let image2 of player_rotations) {
-                sprite_player.setImage(image2)
-                pause(20)
-            }
-        })
+    if (in_game) {
+        if (jump_count < MAX_JUMPS) {
+            spriteutils.jumpImpulse(sprite_player, 26)
+            jump_count += 1
+            timer.background(function () {
+                for (let image2 of player_rotations) {
+                    sprite_player.setImage(image2)
+                    pause(20)
+                }
+            })
+        }
     }
 })
 function prepare_tilemap () {
@@ -66,15 +68,20 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
 let player_rotations: Image[] = []
 let sprite_player: Sprite = null
 let curr_level = 0
+let in_game = false
 let all_levels: tiles.WorldMap[] = []
 let jump_count = 0
 let MAX_JUMPS = 0
 MAX_JUMPS = 2
 jump_count = 0
 all_levels = [tiles.createSmallMap(tilemap`level_1`)]
+in_game = false
 set_level(0)
 make_player()
 prepare_tilemap()
+in_game = true
 game.onUpdate(function () {
-    sprite_player.vx = 100
+    if (in_game) {
+        sprite_player.vx = 100
+    }
 })
