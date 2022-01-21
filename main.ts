@@ -21,6 +21,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_left`, function (sprit
 })
 function set_level (level_num: number) {
     curr_level = level_num
+    won = false
     scene.setBackgroundColor(13)
     tiles.loadMap(tiles.copyMap(all_levels[0]))
     for (let tile of [assets.tile`block`, assets.tile`upper_slab`, assets.tile`lower_slab`]) {
@@ -49,6 +50,12 @@ function prepare_tilemap () {
     tiles.placeOnRandomTile(sprite_flag, assets.tile`end_tile`)
     tiles.setTileAt(tiles.getTilesByType(assets.tile`end_tile`)[0], assets.tile`transparency8`)
 }
+sprites.onOverlap(SpriteKind.Player, SpriteKind.End, function (sprite, otherSprite) {
+    sprite.ay = 0
+    sprite.setFlag(SpriteFlag.Ghost, true)
+    sprite.setFlag(SpriteFlag.AutoDestroy, true)
+    won = true
+})
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_down0`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_down0`)
 })
@@ -62,8 +69,12 @@ function destroy_if_on_tile (sprite: Sprite, tile: Image) {
 }
 function make_player () {
     sprite_player_hitbox = sprites.create(assets.image`player_hitbox`, SpriteKind.Player)
-    sprite_player_hitbox.ay = 500
     sprite_player_hitbox.setFlag(SpriteFlag.Invisible, true)
+    if (true) {
+        sprite_player_hitbox.ay = 500
+    } else {
+        sprite_player_hitbox.setFlag(SpriteFlag.Ghost, true)
+    }
     tiles.placeOnRandomTile(sprite_player_hitbox, assets.tile`start_tile`)
     scene.cameraFollowSprite(sprite_player_hitbox)
 }
@@ -92,21 +103,27 @@ function make_map_progress_bar () {
     sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
 }
 sprites.onDestroyed(SpriteKind.Player, function (sprite) {
-    timer.after(1000, function () {
-        in_game = false
-        sprite_map_progress.value = sprite_player_hitbox.right
-        sprite_map_progress.setFlag(SpriteFlag.Invisible, false)
-        blockMenu.showMenu(["Try again", "Exit"], MenuStyle.List, MenuLocation.BottomHalf)
-        wait_for_select()
-        blockMenu.closeMenu()
-        if (blockMenu.selectedMenuIndex() == 0) {
-            set_level(curr_level)
-            make_player()
-            prepare_tilemap()
-            in_game = true
-        }
-        sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
-    })
+    if (won) {
+        timer.after(1000, function () {
+            game.over(true)
+        })
+    } else {
+        timer.after(1000, function () {
+            in_game = false
+            sprite_map_progress.value = sprite_player_hitbox.right
+            sprite_map_progress.setFlag(SpriteFlag.Invisible, false)
+            blockMenu.showMenu(["Try again", "Exit"], MenuStyle.List, MenuLocation.BottomHalf)
+            wait_for_select()
+            blockMenu.closeMenu()
+            if (blockMenu.selectedMenuIndex() == 0) {
+                set_level(curr_level)
+                make_player()
+                prepare_tilemap()
+                in_game = true
+            }
+            sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
+        })
+    }
 })
 blockMenu.onMenuOptionSelected(function (option, index) {
     menu_selected = true
@@ -118,6 +135,7 @@ let sprite_player_hitbox: Sprite = null
 let curr_level = 0
 let player_rotations: Image[] = []
 let sprite_player: Sprite = null
+let won = false
 let in_game = false
 let all_levels: tiles.WorldMap[] = []
 let jump_count = 0
@@ -127,6 +145,7 @@ MAX_JUMPS = 2
 jump_count = 0
 all_levels = [tiles.createSmallMap(tilemap`level_1`)]
 in_game = false
+won = false
 blockMenu.setColors(12, 11)
 set_level(0)
 make_player()
