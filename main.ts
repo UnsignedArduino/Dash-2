@@ -5,8 +5,14 @@ namespace StatusBarKind {
     export const Progress = StatusBarKind.create()
 }
 scene.onHitWall(SpriteKind.Player, function (sprite, location) {
-    if (sprite.isHittingTile(CollisionDirection.Bottom)) {
-        jump_count = 0
+    if (upside_down) {
+        if (sprite.isHittingTile(CollisionDirection.Top)) {
+            jump_count = 0
+        }
+    } else {
+        if (sprite.isHittingTile(CollisionDirection.Bottom)) {
+            jump_count = 0
+        }
     }
 })
 function make_player_image () {
@@ -16,12 +22,17 @@ function make_player_image () {
     player_rotations = scaling.createRotations(sprite_player.image, 10)
     player_rotations.push(assets.image`player`)
 }
+scene.onOverlapTile(SpriteKind.Player, assets.tile`down_gravity`, function (sprite, location) {
+    sprite.ay = GRAVITY
+    upside_down = false
+})
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_left`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_left`)
 })
 function set_level (level_num: number) {
     curr_level = level_num
     won = false
+    upside_down = false
     scene.setBackgroundColor(13)
     tiles.loadMap(tiles.copyMap(all_levels[0]))
     for (let tile of [assets.tile`block`, assets.tile`upper_slab`, assets.tile`lower_slab`]) {
@@ -33,7 +44,11 @@ function set_level (level_num: number) {
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (in_game) {
         if (jump_count < MAX_JUMPS) {
-            spriteutils.jumpImpulse(sprite_player_hitbox, 26)
+            if (upside_down) {
+                jump_sprite(sprite_player_hitbox, -26)
+            } else {
+                jump_sprite(sprite_player_hitbox, 26)
+            }
             jump_count += 1
             timer.background(function () {
                 for (let image2 of player_rotations) {
@@ -54,6 +69,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.End, function (sprite, otherSpri
     sprite.ay = 0
     sprite.setFlag(SpriteFlag.Ghost, true)
     sprite.setFlag(SpriteFlag.AutoDestroy, true)
+    otherSprite.startEffect(effects.confetti)
     won = true
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_down0`, function (sprite, location) {
@@ -67,11 +83,18 @@ function destroy_if_on_tile (sprite: Sprite, tile: Image) {
         sprite.destroy(effects.spray, 100)
     }
 }
+function jump_sprite (sprite: Sprite, pixels: number) {
+    if (pixels > 0) {
+        sprite.vy = Math.sqrt(2 * (sprite.ay * pixels)) * -1
+    } else {
+        sprite.vy = Math.sqrt(2 * (sprite.ay * pixels))
+    }
+}
 function make_player () {
     sprite_player_hitbox = sprites.create(assets.image`player_hitbox`, SpriteKind.Player)
     sprite_player_hitbox.setFlag(SpriteFlag.Invisible, true)
     if (true) {
-        sprite_player_hitbox.ay = 500
+        sprite_player_hitbox.ay = GRAVITY
     } else {
         sprite_player_hitbox.setFlag(SpriteFlag.Ghost, true)
     }
@@ -80,6 +103,10 @@ function make_player () {
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_right0`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_right0`)
+})
+scene.onOverlapTile(SpriteKind.Player, assets.tile`upside_down_gravity0`, function (sprite, location) {
+    sprite.ay = GRAVITY * -1
+    upside_down = true
 })
 function wait_for_select () {
     menu_selected = false
@@ -120,6 +147,8 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
                 make_player()
                 prepare_tilemap()
                 in_game = true
+            } else {
+                game.reset()
             }
             sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
         })
@@ -135,17 +164,21 @@ let sprite_player_hitbox: Sprite = null
 let curr_level = 0
 let player_rotations: Image[] = []
 let sprite_player: Sprite = null
+let upside_down = false
 let won = false
 let in_game = false
 let all_levels: tiles.WorldMap[] = []
 let jump_count = 0
 let MAX_JUMPS = 0
+let GRAVITY = 0
 stats.turnStats(true)
+GRAVITY = 500
 MAX_JUMPS = 2
 jump_count = 0
-all_levels = [tiles.createSmallMap(tilemap`level_1`)]
+all_levels = [tiles.createSmallMap(tilemap`level_2`)]
 in_game = false
 won = false
+upside_down = false
 blockMenu.setColors(12, 11)
 set_level(0)
 make_player()
