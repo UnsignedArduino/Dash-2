@@ -56,6 +56,25 @@ namespace myImages {
 . 7 . . . . . . 
 . 7 . . . . . . 
 `;
+            case "image5":
+            case "player_flipped":return img`
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . c c c c c c c c . . . . 
+. . . . c b b b b b b c . . . . 
+. . . . c b b b b b b c . . . . 
+. . . . c b b b b b b c . . . . 
+. . . . c b c b b c b c . . . . 
+. . . . c b c b b c b c . . . . 
+. . . . c b b b b b b c . . . . 
+. . . . c c c c c c c c . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+`;
         }
         return null;
     })

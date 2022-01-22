@@ -16,16 +16,29 @@ scene.onHitWall(SpriteKind.Player, function (sprite, location) {
     }
 })
 function make_player_image () {
-    sprite_player = sprites.create(assets.image`player`, SpriteKind.Player)
+    player_image = assets.image`player`
+    player_image_flipped = assets.image`player_flipped`
+    sprite_player = sprites.create(player_image, SpriteKind.Player)
     sprite_player.setFlag(SpriteFlag.Ghost, true)
     sprite_player.setFlag(SpriteFlag.Invisible, false)
-    player_rotations = scaling.createRotations(sprite_player.image, 10)
-    player_rotations.push(assets.image`player`)
+    player_rotations = scaling.createRotations(player_image, 10)
+    player_rotations.push(player_image)
+    player_rotations_flipped = scaling.createRotations(player_image_flipped, 10)
+    player_rotations_flipped.push(player_image_flipped)
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`down_gravity`, function (sprite, location) {
-    sprite.ay = GRAVITY
-    upside_down = false
+    set_gravity(true)
 })
+function set_gravity (up: boolean) {
+    upside_down = !(up)
+    if (up) {
+        sprite_player_hitbox.ay = GRAVITY
+        sprite_player.setImage(assets.image`player`)
+    } else {
+        sprite_player_hitbox.ay = GRAVITY * -1
+        sprite_player.setImage(assets.image`player_flipped`)
+    }
+}
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_left`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_left`)
 })
@@ -51,9 +64,16 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
             }
             jump_count += 1
             timer.background(function () {
-                for (let image2 of player_rotations) {
-                    sprite_player.setImage(image2)
-                    pause(20)
+                if (upside_down) {
+                    for (let image2 of player_rotations_flipped) {
+                        sprite_player.setImage(image2)
+                        pause(20)
+                    }
+                } else {
+                    for (let image2 of player_rotations) {
+                        sprite_player.setImage(image2)
+                        pause(20)
+                    }
                 }
             })
         }
@@ -105,8 +125,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_right0`, function (spr
     destroy_if_on_tile(sprite, assets.tile`spikes_right0`)
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`upside_down_gravity0`, function (sprite, location) {
-    sprite.ay = GRAVITY * -1
-    upside_down = true
+    set_gravity(false)
 })
 function wait_for_select () {
     menu_selected = false
@@ -160,10 +179,13 @@ blockMenu.onMenuOptionSelected(function (option, index) {
 let sprite_map_progress: StatusBarSprite = null
 let menu_selected = false
 let sprite_flag: Sprite = null
-let sprite_player_hitbox: Sprite = null
 let curr_level = 0
+let sprite_player_hitbox: Sprite = null
+let player_rotations_flipped: Image[] = []
 let player_rotations: Image[] = []
 let sprite_player: Sprite = null
+let player_image_flipped: Image = null
+let player_image: Image = null
 let upside_down = false
 let won = false
 let in_game = false
