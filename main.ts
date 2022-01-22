@@ -30,6 +30,9 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`down_gravity`, function (spri
     set_gravity(true)
 })
 function set_gravity (up: boolean) {
+    if (upside_down != up) {
+        return
+    }
     upside_down = !(up)
     if (up) {
         sprite_player_hitbox.ay = GRAVITY
@@ -38,6 +41,7 @@ function set_gravity (up: boolean) {
         sprite_player_hitbox.ay = GRAVITY * -1
         sprite_player.setImage(assets.image`player_flipped`)
     }
+    fade_for_gravity(up, false)
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_left`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_left`)
@@ -143,6 +147,16 @@ function wait_for_select () {
         pause(1)
     }
 }
+function fade_for_gravity (up: boolean, block: boolean) {
+    if (up) {
+        color.startFade(color.DIY, color.originalPalette, 500)
+    } else {
+        color.startFade(color.originalPalette, color.DIY, 500)
+    }
+    if (block) {
+        color.pauseUntilFadeDone()
+    }
+}
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_up0`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_up0`)
 })
@@ -168,6 +182,9 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
             in_game = false
             sprite_map_progress.value = sprite_player_hitbox.right
             sprite_map_progress.setFlag(SpriteFlag.Invisible, false)
+            if (upside_down) {
+                fade_for_gravity(true, true)
+            }
             blockMenu.showMenu(["Try again", "Exit"], MenuStyle.List, MenuLocation.BottomHalf)
             wait_for_select()
             blockMenu.closeMenu()
