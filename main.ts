@@ -124,6 +124,16 @@ function make_player () {
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_right0`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_right0`)
 })
+function fade (_in: boolean, block: boolean) {
+    if (_in) {
+        color.startFade(color.originalPalette, color.Black, 500)
+    } else {
+        color.startFade(color.Black, color.originalPalette, 500)
+    }
+    if (block) {
+        color.pauseUntilFadeDone()
+    }
+}
 scene.onOverlapTile(SpriteKind.Player, assets.tile`upside_down_gravity0`, function (sprite, location) {
     set_gravity(false)
 })
@@ -162,14 +172,18 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
             wait_for_select()
             blockMenu.closeMenu()
             if (blockMenu.selectedMenuIndex() == 0) {
+                fade(true, true)
+                sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
                 set_level(curr_level)
                 make_player()
                 prepare_tilemap()
                 in_game = true
+                fade(false, true)
             } else {
+                fade(true, true)
+                sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
                 game.reset()
             }
-            sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
         })
     }
 })
@@ -194,6 +208,9 @@ let jump_count = 0
 let MAX_JUMPS = 0
 let GRAVITY = 0
 stats.turnStats(true)
+color.setPalette(
+color.Black
+)
 GRAVITY = 500
 MAX_JUMPS = 2
 jump_count = 0
@@ -208,6 +225,7 @@ make_player_image()
 make_map_progress_bar()
 prepare_tilemap()
 in_game = true
+fade(false, false)
 game.onUpdate(function () {
     if (in_game) {
         sprite_player_hitbox.vx = 100
