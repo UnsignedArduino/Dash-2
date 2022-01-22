@@ -165,7 +165,7 @@ function make_map_progress_bar () {
     sprite_map_progress.value = 0
     sprite_map_progress.max = tiles.tilemapColumns() * tiles.tileWidth()
     sprite_map_progress.setColor(12, 11)
-    sprite_map_progress.setBarBorder(1, 12)
+    sprite_map_progress.setBarBorder(1, 15)
     sprite_map_progress.top = 2
     sprite_map_progress.left = 2
     sprite_map_progress.setFlag(SpriteFlag.Ghost, true)
