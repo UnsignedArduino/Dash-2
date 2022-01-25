@@ -21,6 +21,7 @@ function make_player_image () {
     sprite_player = sprites.create(player_image, SpriteKind.Player)
     sprite_player.setFlag(SpriteFlag.Ghost, true)
     sprite_player.setFlag(SpriteFlag.Invisible, false)
+    sprite_player.startEffect(effects.trail)
     player_rotations = scaling.createRotations(player_image, 10)
     player_rotations.push(player_image)
     player_rotations_flipped = scaling.createRotations(player_image_flipped, 10)
@@ -69,6 +70,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
             } else {
                 jump_sprite(sprite_player_hitbox, 26)
             }
+            sprite_player.startEffect(effects.fire, 100)
             jump_count += 1
             timer.background(function () {
                 if (upside_down) {
