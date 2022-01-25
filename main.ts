@@ -46,6 +46,9 @@ function set_gravity (up: boolean) {
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_left`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_left`)
 })
+function teleport_player (tile: Image) {
+    tiles.placeOnRandomTile(sprite_player_hitbox, tile)
+}
 function set_level (level_num: number) {
     curr_level = level_num
     won = false
@@ -82,6 +85,9 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
             })
         }
     }
+})
+scene.onOverlapTile(SpriteKind.Player, assets.tile`teleport_2_from`, function (sprite, location) {
+    teleport_player(assets.tile`teleport_2_to`)
 })
 function prepare_tilemap () {
     tiles.setTileAt(tiles.getTilesByType(assets.tile`start_tile`)[0], assets.tile`transparency8`)
@@ -125,6 +131,9 @@ function make_player () {
     tiles.placeOnRandomTile(sprite_player_hitbox, assets.tile`start_tile`)
     scene.cameraFollowSprite(sprite_player_hitbox)
 }
+scene.onOverlapTile(SpriteKind.Player, assets.tile`teleport_1_from0`, function (sprite, location) {
+    teleport_player(assets.tile`teleport_1_to0`)
+})
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_right0`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_right0`)
 })
@@ -204,6 +213,9 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
         })
     }
 })
+scene.onOverlapTile(SpriteKind.Player, assets.tile`teleport_3_from`, function (sprite, location) {
+    teleport_player(assets.tile`teleport_3_to`)
+})
 blockMenu.onMenuOptionSelected(function (option, index) {
     menu_selected = true
 })
@@ -231,7 +243,7 @@ color.Black
 GRAVITY = 500
 MAX_JUMPS = 2
 jump_count = 0
-all_levels = [tiles.createSmallMap(tilemap`level_2`)]
+all_levels = [tiles.createSmallMap(tilemap`level_3`)]
 in_game = false
 won = false
 upside_down = false
