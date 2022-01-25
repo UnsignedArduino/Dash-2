@@ -22,6 +22,7 @@ function make_player_image () {
     sprite_player.setFlag(SpriteFlag.Ghost, true)
     sprite_player.setFlag(SpriteFlag.Invisible, false)
     sprite_player.startEffect(effects.trail)
+    multilights.addLightSource(sprite_player, 20)
     player_rotations = scaling.createRotations(player_image, 10)
     player_rotations.push(player_image)
     player_rotations_flipped = scaling.createRotations(player_image_flipped, 10)
@@ -96,6 +97,8 @@ function prepare_tilemap () {
     sprite_flag = sprites.create(assets.image`flag`, SpriteKind.End)
     tiles.placeOnRandomTile(sprite_flag, assets.tile`end_tile`)
     tiles.setTileAt(tiles.getTilesByType(assets.tile`end_tile`)[0], assets.tile`transparency8`)
+    multilights.addLightSource(sprite_flag, 8)
+    multilights.toggleLighting(NIGHT_MODE)
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.End, function (sprite, otherSprite) {
     sprite.ay = 0
@@ -189,13 +192,14 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
             game.over(true)
         })
     } else {
+        multilights.toggleLighting(false)
+        if (upside_down) {
+            fade_for_gravity(true, false)
+        }
         timer.after(1000, function () {
             in_game = false
             sprite_map_progress.value = sprite_player_hitbox.right
             sprite_map_progress.setFlag(SpriteFlag.Invisible, false)
-            if (upside_down) {
-                fade_for_gravity(true, true)
-            }
             blockMenu.showMenu(["Try again", "Exit"], MenuStyle.List, MenuLocation.BottomHalf)
             wait_for_select()
             blockMenu.closeMenu()
@@ -236,6 +240,7 @@ let won = false
 let in_game = false
 let all_levels: tiles.WorldMap[] = []
 let jump_count = 0
+let NIGHT_MODE = false
 let MAX_JUMPS = 0
 let GRAVITY = 0
 stats.turnStats(true)
@@ -244,6 +249,7 @@ color.Black
 )
 GRAVITY = 500
 MAX_JUMPS = 2
+NIGHT_MODE = true
 jump_count = 0
 all_levels = [tiles.createSmallMap(tilemap`level_3`)]
 in_game = false
