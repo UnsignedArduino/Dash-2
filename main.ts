@@ -22,7 +22,7 @@ function make_player_image () {
     sprite_player.setFlag(SpriteFlag.Ghost, true)
     sprite_player.setFlag(SpriteFlag.Invisible, false)
     sprite_player.startEffect(effects.trail)
-    multilights.addLightSource(sprite_player, 20)
+    multilights.addLightSource(sprite_player, 16)
     player_rotations = scaling.createRotations(player_image, 10)
     player_rotations.push(player_image)
     player_rotations_flipped = scaling.createRotations(player_image_flipped, 10)
@@ -56,7 +56,7 @@ function set_level (level_num: number) {
     won = false
     upside_down = false
     scene.setBackgroundColor(13)
-    tiles.loadMap(tiles.copyMap(all_levels[0]))
+    tiles.loadMap(tiles.copyMap(all_levels[level_num]))
     for (let tile of [assets.tile`block`, assets.tile`upper_slab`, assets.tile`lower_slab`]) {
         for (let location of tiles.getTilesByType(tile)) {
             tiles.setWallAt(location, true)
@@ -106,6 +106,10 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.End, function (sprite, otherSpri
     sprite.setFlag(SpriteFlag.AutoDestroy, true)
     otherSprite.startEffect(effects.confetti)
     won = true
+    multilights.toggleLighting(false)
+    if (upside_down) {
+        fade_for_gravity(true, false)
+    }
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_down0`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_down0`)
@@ -249,14 +253,18 @@ color.Black
 )
 GRAVITY = 500
 MAX_JUMPS = 2
-NIGHT_MODE = true
+NIGHT_MODE = false
 jump_count = 0
-all_levels = [tiles.createSmallMap(tilemap`level_3`)]
+all_levels = [
+tiles.createSmallMap(tilemap`level_1`),
+tiles.createSmallMap(tilemap`level_2`),
+tiles.createSmallMap(tilemap`level_3`)
+]
 in_game = false
 won = false
 upside_down = false
 blockMenu.setColors(12, 11)
-set_level(0)
+set_level(2)
 make_player()
 make_player_image()
 make_map_progress_bar()
