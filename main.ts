@@ -258,13 +258,14 @@ jump_count = 0
 all_levels = [
 tiles.createSmallMap(tilemap`level_1`),
 tiles.createSmallMap(tilemap`level_2`),
-tiles.createSmallMap(tilemap`level_3`)
+tiles.createSmallMap(tilemap`level_3`),
+tiles.createSmallMap(tilemap`level_4`)
 ]
 in_game = false
 won = false
 upside_down = false
 blockMenu.setColors(12, 11)
-set_level(2)
+set_level(3)
 make_player()
 make_player_image()
 make_map_progress_bar()
