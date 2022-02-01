@@ -20,12 +20,12 @@ function make_player_image () {
     sprite_player = sprites.create(assets.image`player`, SpriteKind.Image)
     sprite_player.setFlag(SpriteFlag.Ghost, true)
     sprite_player.setFlag(SpriteFlag.Invisible, false)
-    sprite_player.startEffect(effects.trail)
     multilights.addLightSource(sprite_player, 16)
     player_rotations = scaling.createRotations(assets.image`player`, 10)
     player_rotations.push(assets.image`player`)
     player_rotations_flipped = scaling.createRotations(assets.image`player_flipped`, 10)
     player_rotations_flipped.push(assets.image`player_flipped`)
+    set_mode(0)
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`down_gravity`, function (sprite, location) {
     set_gravity(true)
@@ -54,6 +54,7 @@ function set_level (level_num: number) {
     curr_level = level_num
     won = false
     upside_down = false
+    mode = 0
     scene.setBackgroundColor(13)
     tiles.loadMap(tiles.copyMap(all_levels[level_num]))
     for (let tile of [assets.tile`block`, assets.tile`upper_slab`, assets.tile`lower_slab`]) {
@@ -65,13 +66,22 @@ function set_level (level_num: number) {
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (in_game) {
         if (jump_count < MAX_JUMPS) {
-            if (upside_down) {
-                jump_sprite(sprite_player_hitbox, -26)
+            if (mode == 0) {
+                if (upside_down) {
+                    jump_sprite(sprite_player_hitbox, -26)
+                } else {
+                    jump_sprite(sprite_player_hitbox, 26)
+                }
+                jump_count += 1
             } else {
-                jump_sprite(sprite_player_hitbox, 26)
+                if (upside_down) {
+                    jump_sprite(sprite_player_hitbox, -8)
+                } else {
+                    jump_sprite(sprite_player_hitbox, 8)
+                }
+                jump_count = 0
             }
             sprite_player.startEffect(effects.fire, 100)
-            jump_count += 1
             timer.background(function () {
                 if (upside_down) {
                     for (let image2 of player_rotations_flipped) {
@@ -99,6 +109,15 @@ function prepare_tilemap () {
     tiles.setTileAt(tiles.getTilesByType(assets.tile`end_tile`)[0], assets.tile`transparency8`)
     multilights.addLightSource(sprite_flag, 8)
     multilights.toggleLighting(NIGHT_MODE)
+}
+function set_mode (m: number) {
+    mode = m
+    effects.clearParticles(sprite_player)
+    if (m == 0) {
+        sprite_player.startEffect(effects.trail)
+    } else {
+        sprite_player.startEffect(effects.fire)
+    }
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.End, function (sprite, otherSprite) {
     sprite.ay = 0
@@ -138,6 +157,9 @@ function make_player () {
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`teleport_1_from0`, function (sprite, location) {
     teleport_player(assets.tile`teleport_1_to0`)
+})
+scene.onOverlapTile(SpriteKind.Player, assets.tile`infinite_jump`, function (sprite, location) {
+    set_mode(1)
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_right0`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_right0`)
@@ -186,6 +208,9 @@ function make_map_progress_bar () {
     sprite_map_progress.setFlag(SpriteFlag.RelativeToCamera, true)
     sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
 }
+scene.onOverlapTile(SpriteKind.Player, assets.tile`regular_jump`, function (sprite, location) {
+    set_mode(0)
+})
 sprites.onDestroyed(SpriteKind.Player, function (sprite) {
     sprite_player.destroy()
     sprite_player_hitbox.destroy()
@@ -236,6 +261,7 @@ let sprite_player_hitbox: Sprite = null
 let player_rotations_flipped: Image[] = []
 let player_rotations: Image[] = []
 let sprite_player: Sprite = null
+let mode = 0
 let upside_down = false
 let won = false
 let in_game = false
@@ -256,13 +282,15 @@ all_levels = [
 tiles.createSmallMap(tilemap`level_1`),
 tiles.createSmallMap(tilemap`level_2`),
 tiles.createSmallMap(tilemap`level_3`),
-tiles.createSmallMap(tilemap`level_4`)
+tiles.createSmallMap(tilemap`level_4`),
+tiles.createSmallMap(tilemap`level_5`)
 ]
 in_game = false
 won = false
 upside_down = false
+mode = 0
 blockMenu.setColors(12, 11)
-set_level(3)
+set_level(4)
 make_player()
 make_player_image()
 make_map_progress_bar()
