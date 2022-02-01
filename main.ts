@@ -1,5 +1,6 @@
 namespace SpriteKind {
     export const End = SpriteKind.create()
+    export const Image = SpriteKind.create()
 }
 namespace StatusBarKind {
     export const Progress = StatusBarKind.create()
@@ -16,17 +17,15 @@ scene.onHitWall(SpriteKind.Player, function (sprite, location) {
     }
 })
 function make_player_image () {
-    player_image = assets.image`player`
-    player_image_flipped = assets.image`player_flipped`
-    sprite_player = sprites.create(player_image, SpriteKind.Player)
+    sprite_player = sprites.create(assets.image`player`, SpriteKind.Image)
     sprite_player.setFlag(SpriteFlag.Ghost, true)
     sprite_player.setFlag(SpriteFlag.Invisible, false)
     sprite_player.startEffect(effects.trail)
     multilights.addLightSource(sprite_player, 16)
-    player_rotations = scaling.createRotations(player_image, 10)
-    player_rotations.push(player_image)
-    player_rotations_flipped = scaling.createRotations(player_image_flipped, 10)
-    player_rotations_flipped.push(player_image_flipped)
+    player_rotations = scaling.createRotations(assets.image`player`, 10)
+    player_rotations.push(assets.image`player`)
+    player_rotations_flipped = scaling.createRotations(assets.image`player_flipped`, 10)
+    player_rotations_flipped.push(assets.image`player_flipped`)
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`down_gravity`, function (sprite, location) {
     set_gravity(true)
@@ -94,6 +93,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`teleport_2_from`, function (s
 })
 function prepare_tilemap () {
     tiles.setTileAt(tiles.getTilesByType(assets.tile`start_tile`)[0], assets.tile`transparency8`)
+    tiles.destroySpritesOfKind(SpriteKind.End)
     sprite_flag = sprites.create(assets.image`flag`, SpriteKind.End)
     tiles.placeOnRandomTile(sprite_flag, assets.tile`end_tile`)
     tiles.setTileAt(tiles.getTilesByType(assets.tile`end_tile`)[0], assets.tile`transparency8`)
@@ -132,11 +132,7 @@ function jump_sprite (sprite: Sprite, pixels: number) {
 function make_player () {
     sprite_player_hitbox = sprites.create(assets.image`player_hitbox`, SpriteKind.Player)
     sprite_player_hitbox.setFlag(SpriteFlag.Invisible, true)
-    if (true) {
-        sprite_player_hitbox.ay = GRAVITY
-    } else {
-        sprite_player_hitbox.setFlag(SpriteFlag.Ghost, true)
-    }
+    sprite_player_hitbox.ay = GRAVITY
     tiles.placeOnRandomTile(sprite_player_hitbox, assets.tile`start_tile`)
     scene.cameraFollowSprite(sprite_player_hitbox)
 }
@@ -191,6 +187,8 @@ function make_map_progress_bar () {
     sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
 }
 sprites.onDestroyed(SpriteKind.Player, function (sprite) {
+    sprite_player.destroy()
+    sprite_player_hitbox.destroy()
     if (won) {
         timer.after(1000, function () {
             game.over(true)
@@ -212,6 +210,7 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
                 sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
                 set_level(curr_level)
                 make_player()
+                make_player_image()
                 prepare_tilemap()
                 in_game = true
                 fade(false, true)
@@ -237,8 +236,6 @@ let sprite_player_hitbox: Sprite = null
 let player_rotations_flipped: Image[] = []
 let player_rotations: Image[] = []
 let sprite_player: Sprite = null
-let player_image_flipped: Image = null
-let player_image: Image = null
 let upside_down = false
 let won = false
 let in_game = false
@@ -282,9 +279,6 @@ game.onUpdate(function () {
             0,
             sprite_player_hitbox
             )
-            sprite_player.setFlag(SpriteFlag.Invisible, false)
-        } else {
-            sprite_player.setFlag(SpriteFlag.Invisible, true)
         }
     }
 })
