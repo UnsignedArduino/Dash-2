@@ -73,6 +73,20 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
                     jump_sprite(sprite_player_hitbox, 26)
                 }
                 jump_count += 1
+                sprite_player.startEffect(effects.fire, 100)
+                timer.background(function () {
+                    if (upside_down) {
+                        for (let image2 of player_rotations_flipped) {
+                            sprite_player.setImage(image2)
+                            pause(20)
+                        }
+                    } else {
+                        for (let image2 of player_rotations) {
+                            sprite_player.setImage(image2)
+                            pause(20)
+                        }
+                    }
+                })
             } else {
                 if (upside_down) {
                     jump_sprite(sprite_player_hitbox, -8)
@@ -81,20 +95,6 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
                 }
                 jump_count = 0
             }
-            sprite_player.startEffect(effects.fire, 100)
-            timer.background(function () {
-                if (upside_down) {
-                    for (let image2 of player_rotations_flipped) {
-                        sprite_player.setImage(image2)
-                        pause(20)
-                    }
-                } else {
-                    for (let image2 of player_rotations) {
-                        sprite_player.setImage(image2)
-                        pause(20)
-                    }
-                }
-            })
         }
     }
 })
@@ -113,11 +113,7 @@ function prepare_tilemap () {
 function set_mode (m: number) {
     mode = m
     effects.clearParticles(sprite_player)
-    if (m == 0) {
-        sprite_player.startEffect(effects.trail)
-    } else {
-        sprite_player.startEffect(effects.fire)
-    }
+    sprite_player.startEffect(effects.trail)
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.End, function (sprite, otherSprite) {
     sprite.ay = 0
