@@ -16,17 +16,6 @@ scene.onHitWall(SpriteKind.Player, function (sprite, location) {
         }
     }
 })
-function make_player_image () {
-    sprite_player = sprites.create(assets.image`player`, SpriteKind.Image)
-    sprite_player.setFlag(SpriteFlag.Ghost, true)
-    sprite_player.setFlag(SpriteFlag.Invisible, false)
-    multilights.addLightSource(sprite_player, 16)
-    player_rotations = scaling.createRotations(assets.image`player`, 10)
-    player_rotations.push(assets.image`player`)
-    player_rotations_flipped = scaling.createRotations(assets.image`player_flipped`, 10)
-    player_rotations_flipped.push(assets.image`player_flipped`)
-    set_mode(0)
-}
 scene.onOverlapTile(SpriteKind.Player, assets.tile`down_gravity`, function (sprite, location) {
     set_gravity(true)
 })
@@ -37,11 +26,10 @@ function set_gravity (up: boolean) {
     upside_down = !(up)
     if (up) {
         sprite_player_hitbox.ay = GRAVITY
-        sprite_player.setImage(assets.image`player`)
     } else {
         sprite_player_hitbox.ay = GRAVITY * -1
-        sprite_player.setImage(assets.image`player_flipped`)
     }
+    update_player_visuals()
     fade_for_gravity(up, false)
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_left`, function (sprite, location) {
@@ -49,6 +37,28 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_left`, function (sprit
 })
 function teleport_player (tile: Image) {
     tiles.placeOnRandomTile(sprite_player_hitbox, tile)
+}
+function update_player_visuals () {
+    if (!(upside_down)) {
+        sprite_player.setImage(assets.image`player`)
+    } else {
+        sprite_player.setImage(assets.image`player_flipped`)
+    }
+    sprite_player_wings.setFlag(SpriteFlag.Invisible, mode == 0)
+}
+function make_player_visuals () {
+    sprite_player = sprites.create(assets.image`player`, SpriteKind.Image)
+    sprite_player.setFlag(SpriteFlag.Ghost, true)
+    sprite_player.setFlag(SpriteFlag.Invisible, true)
+    multilights.addLightSource(sprite_player, 16)
+    player_rotations = scaling.createRotations(assets.image`player`, 10)
+    player_rotations.push(assets.image`player`)
+    player_rotations_flipped = scaling.createRotations(assets.image`player_flipped`, 10)
+    player_rotations_flipped.push(assets.image`player_flipped`)
+    sprite_player_wings = sprites.create(assets.image`player_wings`, SpriteKind.Image)
+    sprite_player_wings.setFlag(SpriteFlag.Ghost, true)
+    sprite_player_wings.setFlag(SpriteFlag.Invisible, true)
+    set_mode(0)
 }
 function set_level (level_num: number) {
     curr_level = level_num
@@ -114,6 +124,7 @@ function set_mode (m: number) {
     mode = m
     effects.clearParticles(sprite_player)
     sprite_player.startEffect(effects.trail)
+    update_player_visuals()
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.End, function (sprite, otherSprite) {
     sprite.ay = 0
@@ -146,7 +157,8 @@ function jump_sprite (sprite: Sprite, pixels: number) {
 }
 function make_player () {
     sprite_player_hitbox = sprites.create(assets.image`player_hitbox`, SpriteKind.Player)
-    sprite_player_hitbox.setFlag(SpriteFlag.Invisible, true)
+    sprite_player_hitbox.setFlag(SpriteFlag.Invisible, false)
+    sprite_player_hitbox.setFlag(SpriteFlag.ShowPhysics, true)
     sprite_player_hitbox.ay = GRAVITY
     tiles.placeOnRandomTile(sprite_player_hitbox, assets.tile`start_tile`)
     scene.cameraFollowSprite(sprite_player_hitbox)
@@ -231,7 +243,7 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
                 sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
                 set_level(curr_level)
                 make_player()
-                make_player_image()
+                make_player_visuals()
                 prepare_tilemap()
                 in_game = true
                 fade(false, true)
@@ -253,10 +265,11 @@ let sprite_map_progress: StatusBarSprite = null
 let menu_selected = false
 let sprite_flag: Sprite = null
 let curr_level = 0
-let sprite_player_hitbox: Sprite = null
 let player_rotations_flipped: Image[] = []
 let player_rotations: Image[] = []
+let sprite_player_wings: Sprite = null
 let sprite_player: Sprite = null
+let sprite_player_hitbox: Sprite = null
 let mode = 0
 let upside_down = false
 let won = false
@@ -288,7 +301,7 @@ mode = 0
 blockMenu.setColors(12, 11)
 set_level(4)
 make_player()
-make_player_image()
+make_player_visuals()
 make_map_progress_bar()
 prepare_tilemap()
 in_game = true
@@ -303,6 +316,14 @@ game.onUpdate(function () {
             0,
             sprite_player_hitbox
             )
+            spriteutils.placeAngleFrom(
+            sprite_player_wings,
+            0,
+            0,
+            sprite_player_hitbox
+            )
+        } else {
+            sprite_player_wings.setFlag(SpriteFlag.Invisible, true)
         }
     }
 })

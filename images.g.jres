@@ -24,6 +24,11 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "player_flipped"
     },
+    "image6": {
+        "data": "hwQQABAAAAAAABEAAAAAAAAAEQEAAAAAAAAQAQAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAEAEAAAAAAAARAQAAAAAAABEAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "player_wings"
+    },
     "*": {
         "mimeType": "image/x-mkcd-f4",
         "dataEncoding": "base64",
