@@ -49,7 +49,7 @@ function update_player_visuals () {
 function make_player_visuals () {
     sprite_player = sprites.create(assets.image`player`, SpriteKind.Image)
     sprite_player.setFlag(SpriteFlag.Ghost, true)
-    sprite_player.setFlag(SpriteFlag.Invisible, true)
+    sprite_player.setFlag(SpriteFlag.Invisible, DEBUG)
     multilights.addLightSource(sprite_player, 16)
     player_rotations = scaling.createRotations(assets.image`player`, 10)
     player_rotations.push(assets.image`player`)
@@ -157,8 +157,8 @@ function jump_sprite (sprite: Sprite, pixels: number) {
 }
 function make_player () {
     sprite_player_hitbox = sprites.create(assets.image`player_hitbox`, SpriteKind.Player)
-    sprite_player_hitbox.setFlag(SpriteFlag.Invisible, false)
-    sprite_player_hitbox.setFlag(SpriteFlag.ShowPhysics, true)
+    sprite_player_hitbox.setFlag(SpriteFlag.Invisible, !(DEBUG))
+    sprite_player_hitbox.setFlag(SpriteFlag.ShowPhysics, DEBUG)
     sprite_player_hitbox.ay = GRAVITY
     tiles.placeOnRandomTile(sprite_player_hitbox, assets.tile`start_tile`)
     scene.cameraFollowSprite(sprite_player_hitbox)
@@ -261,6 +261,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`teleport_3_from`, function (s
 blockMenu.onMenuOptionSelected(function (option, index) {
     menu_selected = true
 })
+let colliding_dirs = ""
 let sprite_map_progress: StatusBarSprite = null
 let menu_selected = false
 let sprite_flag: Sprite = null
@@ -279,6 +280,8 @@ let jump_count = 0
 let NIGHT_MODE = false
 let MAX_JUMPS = 0
 let GRAVITY = 0
+let DEBUG = false
+DEBUG = true
 stats.turnStats(true)
 color.setPalette(
 color.Black
@@ -322,6 +325,22 @@ game.onUpdate(function () {
             0,
             sprite_player_hitbox
             )
+            if (DEBUG) {
+                colliding_dirs = ""
+                if (sprite_player_hitbox.isHittingTile(CollisionDirection.Left)) {
+                    colliding_dirs = "" + colliding_dirs + "L"
+                }
+                if (sprite_player_hitbox.isHittingTile(CollisionDirection.Top)) {
+                    colliding_dirs = "" + colliding_dirs + "U"
+                }
+                if (sprite_player_hitbox.isHittingTile(CollisionDirection.Right)) {
+                    colliding_dirs = "" + colliding_dirs + "R"
+                }
+                if (sprite_player_hitbox.isHittingTile(CollisionDirection.Bottom)) {
+                    colliding_dirs = "" + colliding_dirs + "D"
+                }
+                sprite_player_hitbox.sayText(colliding_dirs)
+            }
         } else {
             sprite_player_wings.setFlag(SpriteFlag.Invisible, true)
         }
