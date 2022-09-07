@@ -281,7 +281,7 @@ let NIGHT_MODE = false
 let MAX_JUMPS = 0
 let GRAVITY = 0
 let DEBUG = false
-DEBUG = true
+DEBUG = false
 stats.turnStats(true)
 color.setPalette(
 color.Black
@@ -302,7 +302,7 @@ won = false
 upside_down = false
 mode = 0
 blockMenu.setColors(12, 11)
-set_level(4)
+set_level(0)
 make_player()
 make_player_visuals()
 make_map_progress_bar()
