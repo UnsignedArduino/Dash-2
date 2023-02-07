@@ -303,6 +303,8 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
             in_game = false
             timer.background(function () {
                 sprite_map_progress.value = sprite_player_hitbox.right
+                sprite_map_progress.bottom = 0
+                sprite_map_progress.vy = 50
                 sprite_map_progress.setFlag(SpriteFlag.Invisible, false)
                 images_button_list = [assets.image`try_again_icon`, assets.image`exit_icon`]
                 images_button_list_selected = [assets.image`try_again_icon_selected`, assets.image`exit_icon_selected`]
@@ -313,9 +315,26 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
                     sprite_button.setFlag(SpriteFlag.Ghost, true)
                     sprite_button.setFlag(SpriteFlag.RelativeToCamera, true)
                     sprite_button.x = (index + 1) * (scene.screenWidth() / (images_button_list.length + 1))
-                    sprite_button.y = scene.screenHeight() / 2
+                    sprite_button.top = scene.screenHeight()
+                    sprite_button.vy = -2000
                     sprites_button_list.push(sprite_button)
                 }
+                timer.background(function () {
+                    while (sprites_button_list[0].y > scene.screenHeight() * 0.55) {
+                        pause(0)
+                    }
+                    for (let index = 0; index <= sprites_button_list.length - 1; index++) {
+                        sprites_button_list[index].y = scene.screenHeight() / 2
+                        sprites_button_list[index].vy = 0
+                    }
+                })
+                timer.background(function () {
+                    while (sprite_map_progress.top < 2) {
+                        pause(0)
+                    }
+                    sprite_map_progress.top = 2
+                    sprite_map_progress.vy = 0
+                })
                 while (true) {
                     for (let index = 0; index <= sprites_button_list.length - 1; index++) {
                         sprite_button = sprites_button_list[index]
@@ -330,8 +349,19 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
                     }
                     pause(0)
                 }
-                sprites.destroyAllSpritesOfKind(SpriteKind.Button)
-                sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
+                for (let index = 0; index <= sprites_button_list.length - 1; index++) {
+                    sprites_button_list[index].setFlag(SpriteFlag.AutoDestroy, true)
+                    sprites_button_list[index].vy = 2000
+                }
+                sprite_map_progress.vy = -50
+                timer.background(function () {
+                    while (sprite_map_progress.bottom > 0) {
+                        pause(0)
+                    }
+                    sprite_map_progress.bottom = 0
+                    sprite_map_progress.vy = 0
+                    sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
+                })
                 if (button_list_selected == 0) {
                     fade(true, true)
                     set_level(curr_level)
