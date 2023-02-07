@@ -41,10 +41,20 @@ function teleport_player (tile: Image) {
 function update_player_visuals () {
     if (!(upside_down)) {
         sprite_player.setImage(assets.image`player`)
+        animation_flap = animation_original_flap
+        animation_flap_hard = animation_original_flap_hard
     } else {
         sprite_player.setImage(assets.image`player_flipped`)
+        animation_flap = animation_upside_down_flap
+        animation_flap_hard = animation_upside_down_flap_hard
     }
     sprite_player_wings.setFlag(SpriteFlag.Invisible, mode == 0)
+    animation.runImageAnimation(
+    sprite_player_wings,
+    animation_flap,
+    200,
+    true
+    )
 }
 function make_player_visuals () {
     sprite_player = sprites.create(assets.image`player`, SpriteKind.Image)
@@ -56,9 +66,15 @@ function make_player_visuals () {
     player_rotations_flipped = scaling.createRotations(assets.image`player_flipped`, 10)
     player_rotations_flipped.push(assets.image`player_flipped`)
     sprite_player_wings = sprites.create(assets.image`player_wings`, SpriteKind.Image)
+    animation_original_flap = assets.animation`flap`
+    animation_original_flap_hard = assets.animation`flap_hard`
+    animation_upside_down_flap = assets.animation`flap_upside_down`
+    animation_upside_down_flap_hard = assets.animation`flap_hard_upside_down`
+    animation_flap = animation_original_flap
+    animation_flap_hard = animation_original_flap_hard
     animation.runImageAnimation(
     sprite_player_wings,
-    assets.animation`flap`,
+    animation_flap,
     200,
     true
     )
@@ -113,14 +129,14 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
                 animation.stopAnimation(animation.AnimationTypes.All, sprite_player_wings)
                 animation.runImageAnimation(
                 sprite_player_wings,
-                assets.animation`flap_hard`,
+                animation_flap_hard,
                 50,
                 false
                 )
                 timer.debounce("animate_flap_hard", 300, function () {
                     animation.runImageAnimation(
                     sprite_player_wings,
-                    assets.animation`flap`,
+                    animation_flap,
                     200,
                     true
                     )
@@ -298,6 +314,12 @@ let curr_level = 0
 let player_rotations_flipped: Image[] = []
 let player_rotations: Image[] = []
 let sprite_player_wings: Sprite = null
+let animation_upside_down_flap_hard: Image[] = []
+let animation_upside_down_flap: Image[] = []
+let animation_original_flap_hard: Image[] = []
+let animation_flap_hard: Image[] = []
+let animation_original_flap: Image[] = []
+let animation_flap: Image[] = []
 let sprite_player: Sprite = null
 let sprite_player_hitbox: Sprite = null
 let mode = 0
