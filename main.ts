@@ -56,6 +56,12 @@ function make_player_visuals () {
     player_rotations_flipped = scaling.createRotations(assets.image`player_flipped`, 10)
     player_rotations_flipped.push(assets.image`player_flipped`)
     sprite_player_wings = sprites.create(assets.image`player_wings`, SpriteKind.Image)
+    animation.runImageAnimation(
+    sprite_player_wings,
+    assets.animation`flap`,
+    200,
+    true
+    )
     sprite_player_wings.setFlag(SpriteFlag.Ghost, true)
     sprite_player_wings.setFlag(SpriteFlag.Invisible, true)
     set_mode(0)
@@ -104,6 +110,21 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
                     jump_sprite(sprite_player_hitbox, 8)
                 }
                 jump_count = 0
+                animation.stopAnimation(animation.AnimationTypes.All, sprite_player_wings)
+                animation.runImageAnimation(
+                sprite_player_wings,
+                assets.animation`flap_hard`,
+                50,
+                false
+                )
+                timer.debounce("animate_flap_hard", 300, function () {
+                    animation.runImageAnimation(
+                    sprite_player_wings,
+                    assets.animation`flap`,
+                    200,
+                    true
+                    )
+                })
             }
         }
     }
@@ -185,11 +206,6 @@ function fade (_in: boolean, block: boolean) {
 scene.onOverlapTile(SpriteKind.Player, assets.tile`upside_down_gravity0`, function (sprite, location) {
     set_gravity(false)
 })
-function wait_for_select () {
-    while (!(false)) {
-        pause(1)
-    }
-}
 function fade_for_gravity (up: boolean, block: boolean) {
     if (up) {
         color.startFade(color.DIY, color.originalPalette, 500)
@@ -314,7 +330,7 @@ in_game = false
 won = false
 upside_down = false
 mode = 0
-set_level(3)
+set_level(4)
 make_player()
 make_player_visuals()
 make_map_progress_bar()
