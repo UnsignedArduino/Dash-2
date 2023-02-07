@@ -175,10 +175,10 @@ function set_mode (m: number) {
 }
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     if (sprites_button_list.length > 0) {
-        if (button_list_selected < sprites_button_list.length - 1) {
-            button_list_selected += 1
+        if (button_list_selected > 0) {
+            button_list_selected += -1
         } else {
-            button_list_selected = 0
+            button_list_selected = sprites_button_list.length - 1
         }
     }
 })
@@ -195,10 +195,10 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.End, function (sprite, otherSpri
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     if (sprites_button_list.length > 0) {
-        if (button_list_selected > 0) {
-            button_list_selected += -1
+        if (button_list_selected < sprites_button_list.length - 1) {
+            button_list_selected += 1
         } else {
-            button_list_selected = sprites_button_list.length - 1
+            button_list_selected = 0
         }
     }
 })
@@ -301,21 +301,21 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
         }
         timer.after(1000, function () {
             in_game = false
-            sprite_map_progress.value = sprite_player_hitbox.right
-            sprite_map_progress.setFlag(SpriteFlag.Invisible, false)
-            images_button_list = [assets.image`try_again_icon`, assets.image`exit_icon`]
-            images_button_list_selected = [assets.image`try_again_icon_selected`, assets.image`exit_icon_selected`]
-            sprites_button_list = []
-            button_list_selected = 0
-            for (let index = 0; index <= images_button_list.length - 1; index++) {
-                sprite_button = sprites.create(images_button_list[index], SpriteKind.Button)
-                sprite_button.setFlag(SpriteFlag.Ghost, true)
-                sprite_button.setFlag(SpriteFlag.RelativeToCamera, true)
-                sprite_button.x = (index + 1) * (scene.screenWidth() / (images_button_list.length + 1))
-                sprite_button.y = scene.screenHeight() / 2
-                sprites_button_list.push(sprite_button)
-            }
             timer.background(function () {
+                sprite_map_progress.value = sprite_player_hitbox.right
+                sprite_map_progress.setFlag(SpriteFlag.Invisible, false)
+                images_button_list = [assets.image`try_again_icon`, assets.image`exit_icon`]
+                images_button_list_selected = [assets.image`try_again_icon_selected`, assets.image`exit_icon_selected`]
+                sprites_button_list = []
+                button_list_selected = 0
+                for (let index = 0; index <= images_button_list.length - 1; index++) {
+                    sprite_button = sprites.create(images_button_list[index], SpriteKind.Button)
+                    sprite_button.setFlag(SpriteFlag.Ghost, true)
+                    sprite_button.setFlag(SpriteFlag.RelativeToCamera, true)
+                    sprite_button.x = (index + 1) * (scene.screenWidth() / (images_button_list.length + 1))
+                    sprite_button.y = scene.screenHeight() / 2
+                    sprites_button_list.push(sprite_button)
+                }
                 while (true) {
                     for (let index = 0; index <= sprites_button_list.length - 1; index++) {
                         sprite_button = sprites_button_list[index]
@@ -330,9 +330,8 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
                     }
                     pause(0)
                 }
-                sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
                 sprites.destroyAllSpritesOfKind(SpriteKind.Button)
-                sprites_button_list = []
+                sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
                 if (button_list_selected == 0) {
                     fade(true, true)
                     set_level(curr_level)
@@ -343,6 +342,7 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
                     fade(false, true)
                 } else {
                     fade(true, true)
+                    sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
                     game.reset()
                 }
             })
@@ -402,7 +402,7 @@ in_game = false
 won = false
 upside_down = false
 mode = 0
-set_level(0)
+set_level(4)
 make_player()
 make_player_visuals()
 make_map_progress_bar()

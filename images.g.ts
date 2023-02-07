@@ -113,6 +113,25 @@ f d b b b b b b b b d d d d d f
 f d d d d d d d d d d d d d d f 
 . f f f f f f f f f f f f f f . 
 `;
+            case "image7":
+            case "try_again_icon":return img`
+. f f f f f f f f f f f f f f . 
+f d d d d d d d d d d d d d d f 
+f d d b b b b b b b b d d d d f 
+f d b b b b b b b b b b d d d f 
+f d b b d d d d d d b b d d d f 
+f d b b d d d d d d b b d d d f 
+f d b b d d d d d d b b d d d f 
+f d b b d d d d b b b b b b d f 
+f d b b d d d d b b b b b b d f 
+f d b b d d d d d b b b b d d f 
+f d b b d d d d d d b b d d d f 
+f d b b d d d d d d d d d d d f 
+f d b b b b b b b b b b d d d f 
+f d d b b b b b b b b b d d d f 
+f d d d d d d d d d d d d d d f 
+. f f f f f f f f f f f f f f . 
+`;
             case "image9":
             case "try_again_icon_selected":return img`
 . f f f f f f f f f f f f f f . 
@@ -149,25 +168,6 @@ f b c b b b b b b c b b b b b f
 f b c b b b b b b c b b b b b f 
 f b c c c c c c c c b b b b b f 
 f b b b b b b b b b b b b b b f 
-. f f f f f f f f f f f f f f . 
-`;
-            case "image7":
-            case "try_again_icon":return img`
-. f f f f f f f f f f f f f f . 
-f d d d d d d d d d d d d d d f 
-f d d b b b b b b b b d d d d f 
-f d b b b b b b b b b b d d d f 
-f d b b d d d d d d b b d d d f 
-f d b b d d d d d d b b d d d f 
-f d b b d d d d d d b b d d d f 
-f d b b d d d d b b b b b b d f 
-f d b b d d d d b b b b b b d f 
-f d b b d d d d d b b b b d d f 
-f d b b d d d d d d b b d d d f 
-f d b b d d d d d d d d d d d f 
-f d b b b b b b b b b b d d d f 
-f d d b b b b b b b b b d d d f 
-f d d d d d d d d d d d d d d f 
 . f f f f f f f f f f f f f f . 
 `;
         }
