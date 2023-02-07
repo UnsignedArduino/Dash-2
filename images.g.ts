@@ -94,43 +94,81 @@ namespace myImages {
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 `;
-            case "image7":
-            case "try_again_icon":return img`
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . c c c c c c c c . . . . . 
-. . c c c c c c c c c c . . . . 
-. . c c . . . . . . c c . . . . 
-. . c c . . . . . . c c . . . . 
-. . c c . . . . . . c c . . . . 
-. . c c . . . . c c c c c c . . 
-. . c c . . . . c c c c c c . . 
-. . c c . . . . . c c c c . . . 
-. . c c . . . . . . c c . . . . 
-. . c c . . . . . . . . . . . . 
-. . c c c c c c c c c c . . . . 
-. . . c c c c c c c c c . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-`;
             case "image8":
             case "exit_icon":return img`
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . c c c c c c c c . . . . . . 
-. . c . . . . . . c . . . . . . 
-. . c . . . . . . c . . . . . . 
-. . c . . . . . . c . c . . . . 
-. . c . . . . . . . . c c . . . 
-. . c . . c c c c c c c c c . . 
-. . c . . c c c c c c c c c . . 
-. . c . . . . . . . . c c . . . 
-. . c . . . . . . c . c . . . . 
-. . c . . . . . . c . . . . . . 
-. . c . . . . . . c . . . . . . 
-. . c c c c c c c c . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
+. f f f f f f f f f f f f f f . 
+f d d d d d d d d d d d d d d f 
+f d b b b b b b b b d d d d d f 
+f d b d d d d d d b d d d d d f 
+f d b d d d d d d b d d d d d f 
+f d b d d d d d d b d b d d d f 
+f d b d d d d d d d d b b d d f 
+f d b d d b b b b b b b b b d f 
+f d b d d b b b b b b b b b d f 
+f d b d d d d d d d d b b d d f 
+f d b d d d d d d b d b d d d f 
+f d b d d d d d d b d d d d d f 
+f d b d d d d d d b d d d d d f 
+f d b b b b b b b b d d d d d f 
+f d d d d d d d d d d d d d d f 
+. f f f f f f f f f f f f f f . 
+`;
+            case "image9":
+            case "try_again_icon_selected":return img`
+. f f f f f f f f f f f f f f . 
+f b b b b b b b b b b b b b b f 
+f b b c c c c c c c c b b b b f 
+f b c c c c c c c c c c b b b f 
+f b c c b b b b b b c c b b b f 
+f b c c b b b b b b c c b b b f 
+f b c c b b b b b b c c b b b f 
+f b c c b b b b c c c c c c b f 
+f b c c b b b b c c c c c c b f 
+f b c c b b b b b c c c c b b f 
+f b c c b b b b b b c c b b b f 
+f b c c b b b b b b b b b b b f 
+f b c c c c c c c c c c b b b f 
+f b b c c c c c c c c c b b b f 
+f b b b b b b b b b b b b b b f 
+. f f f f f f f f f f f f f f . 
+`;
+            case "image10":
+            case "exit_icon_selected":return img`
+. f f f f f f f f f f f f f f . 
+f b b b b b b b b b b b b b b f 
+f b c c c c c c c c b b b b b f 
+f b c b b b b b b c b b b b b f 
+f b c b b b b b b c b b b b b f 
+f b c b b b b b b c b c b b b f 
+f b c b b b b b b b b c c b b f 
+f b c b b c c c c c c c c c b f 
+f b c b b c c c c c c c c c b f 
+f b c b b b b b b b b c c b b f 
+f b c b b b b b b c b c b b b f 
+f b c b b b b b b c b b b b b f 
+f b c b b b b b b c b b b b b f 
+f b c c c c c c c c b b b b b f 
+f b b b b b b b b b b b b b b f 
+. f f f f f f f f f f f f f f . 
+`;
+            case "image7":
+            case "try_again_icon":return img`
+. f f f f f f f f f f f f f f . 
+f d d d d d d d d d d d d d d f 
+f d d b b b b b b b b d d d d f 
+f d b b b b b b b b b b d d d f 
+f d b b d d d d d d b b d d d f 
+f d b b d d d d d d b b d d d f 
+f d b b d d d d d d b b d d d f 
+f d b b d d d d b b b b b b d f 
+f d b b d d d d b b b b b b d f 
+f d b b d d d d d b b b b d d f 
+f d b b d d d d d d b b d d d f 
+f d b b d d d d d d d d d d d f 
+f d b b b b b b b b b b d d d f 
+f d d b b b b b b b b b d d d f 
+f d d d d d d d d d d d d d d f 
+. f f f f f f f f f f f f f f . 
 `;
         }
         return null;

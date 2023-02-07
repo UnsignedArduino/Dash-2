@@ -1,10 +1,20 @@
 namespace SpriteKind {
     export const End = SpriteKind.create()
     export const Image = SpriteKind.create()
+    export const Button = SpriteKind.create()
 }
 namespace StatusBarKind {
     export const Progress = StatusBarKind.create()
 }
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (sprites_button_list.length > 0) {
+        if (button_list_selected > 0) {
+            button_list_selected += -1
+        } else {
+            button_list_selected = sprites_button_list.length - 1
+        }
+    }
+})
 scene.onHitWall(SpriteKind.Player, function (sprite, location) {
     if (upside_down) {
         if (sprite.isHittingTile(CollisionDirection.Top)) {
@@ -163,6 +173,15 @@ function set_mode (m: number) {
     sprite_player.startEffect(effects.trail)
     update_player_visuals()
 }
+controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (sprites_button_list.length > 0) {
+        if (button_list_selected < sprites_button_list.length - 1) {
+            button_list_selected += 1
+        } else {
+            button_list_selected = 0
+        }
+    }
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.End, function (sprite, otherSprite) {
     sprite.ay = 0
     sprite.setFlag(SpriteFlag.Ghost, true)
@@ -172,6 +191,15 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.End, function (sprite, otherSpri
     multilights.toggleLighting(false)
     if (upside_down) {
         fade_for_gravity(true, false)
+    }
+})
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (sprites_button_list.length > 0) {
+        if (button_list_selected > 0) {
+            button_list_selected += -1
+        } else {
+            button_list_selected = sprites_button_list.length - 1
+        }
     }
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_down0`, function (sprite, location) {
@@ -202,6 +230,15 @@ function make_player () {
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`teleport_1_from0`, function (sprite, location) {
     teleport_player(assets.tile`teleport_1_to0`)
+})
+controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (sprites_button_list.length > 0) {
+        if (button_list_selected < sprites_button_list.length - 1) {
+            button_list_selected += 1
+        } else {
+            button_list_selected = 0
+        }
+    }
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`infinite_jump`, function (sprite, location) {
     set_mode(1)
@@ -266,28 +303,38 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
             in_game = false
             sprite_map_progress.value = sprite_player_hitbox.right
             sprite_map_progress.setFlag(SpriteFlag.Invisible, false)
-            menu_died = miniMenu.createMenu(
-            miniMenu.createMenuItem("", assets.image`try_again_icon`),
-            miniMenu.createMenuItem("", assets.image`exit_icon`)
-            )
-            menu_died.setFlag(SpriteFlag.Ghost, true)
-            menu_died.setFlag(SpriteFlag.RelativeToCamera, true)
-            menu_died.setDimensions(42, 20)
-            menu_died.x = scene.screenWidth() / 2
-            menu_died.y = scene.screenHeight() / 2
-            menu_died.setMenuStyleProperty(miniMenu.MenuStyleProperty.Columns, 2)
-            menu_died.setMenuStyleProperty(miniMenu.MenuStyleProperty.Border, 1)
-            menu_died.setMenuStyleProperty(miniMenu.MenuStyleProperty.BorderColor, images.colorBlock(15))
-            menu_died.setStyleProperty(miniMenu.StyleKind.Default, miniMenu.StyleProperty.Background, images.colorBlock(11))
-            menu_died.setStyleProperty(miniMenu.StyleKind.Default, miniMenu.StyleProperty.Foreground, images.colorBlock(1))
-            menu_died.setStyleProperty(miniMenu.StyleKind.Selected, miniMenu.StyleProperty.Background, images.colorBlock(1))
-            menu_died.setStyleProperty(miniMenu.StyleKind.Selected, miniMenu.StyleProperty.Foreground, images.colorBlock(11))
-            menu_died.setStyleProperty(miniMenu.StyleKind.All, miniMenu.StyleProperty.IconOnly, 1)
-            menu_died.onButtonPressed(controller.A, function (selection, selectedIndex) {
-                menu_died.close()
-                if (selectedIndex == 0) {
+            images_button_list = [assets.image`try_again_icon`, assets.image`exit_icon`]
+            images_button_list_selected = [assets.image`try_again_icon_selected`, assets.image`exit_icon_selected`]
+            sprites_button_list = []
+            button_list_selected = 0
+            for (let index = 0; index <= images_button_list.length - 1; index++) {
+                sprite_button = sprites.create(images_button_list[index], SpriteKind.Button)
+                sprite_button.setFlag(SpriteFlag.Ghost, true)
+                sprite_button.setFlag(SpriteFlag.RelativeToCamera, true)
+                sprite_button.x = (index + 1) * (scene.screenWidth() / (images_button_list.length + 1))
+                sprite_button.y = scene.screenHeight() / 2
+                sprites_button_list.push(sprite_button)
+            }
+            timer.background(function () {
+                while (true) {
+                    for (let index = 0; index <= sprites_button_list.length - 1; index++) {
+                        sprite_button = sprites_button_list[index]
+                        if (index == button_list_selected) {
+                            sprite_button.setImage(images_button_list_selected[index])
+                        } else {
+                            sprite_button.setImage(images_button_list[index])
+                        }
+                    }
+                    if (controller.A.isPressed()) {
+                        break;
+                    }
+                    pause(0)
+                }
+                sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
+                sprites.destroyAllSpritesOfKind(SpriteKind.Button)
+                sprites_button_list = []
+                if (button_list_selected == 0) {
                     fade(true, true)
-                    sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
                     set_level(curr_level)
                     make_player()
                     make_player_visuals()
@@ -296,7 +343,6 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
                     fade(false, true)
                 } else {
                     fade(true, true)
-                    sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
                     game.reset()
                 }
             })
@@ -307,7 +353,9 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`teleport_3_from`, function (s
     teleport_player(assets.tile`teleport_3_to`)
 })
 let colliding_dirs = ""
-let menu_died: miniMenu.MenuSprite = null
+let sprite_button: Sprite = null
+let images_button_list_selected: Image[] = []
+let images_button_list: Image[] = []
 let sprite_map_progress: StatusBarSprite = null
 let sprite_flag: Sprite = null
 let curr_level = 0
@@ -322,6 +370,8 @@ let animation_original_flap: Image[] = []
 let animation_flap: Image[] = []
 let sprite_player: Sprite = null
 let sprite_player_hitbox: Sprite = null
+let button_list_selected = 0
+let sprites_button_list: Sprite[] = []
 let mode = 0
 let upside_down = false
 let won = false
@@ -352,7 +402,7 @@ in_game = false
 won = false
 upside_down = false
 mode = 0
-set_level(4)
+set_level(0)
 make_player()
 make_player_visuals()
 make_map_progress_bar()
