@@ -12,7 +12,9 @@
         "pxt-status-bar": "github:jwunderl/pxt-status-bar#v0.4.1",
         "arcade-text": "github:microsoft/arcade-text#v1.3.0",
         "Color Fading": "github:jwunderl/pxt-color#v0.2.1",
-        "pxt-lantern": "github:felixtsu/pxt-lantern#v0.2.0"
+        "pxt-lantern": "github:felixtsu/pxt-lantern#v0.2.0",
+        "arcade-mini-menu": "github:riknoll/arcade-mini-menu#c8b01b9d47f85a5133c786f1c026b1f376fe4285",
+        "ColorBlock": "github:UnsignedArduino/ColorBlock#ac7b9500e40045cf1ddd8c5b7481d11bcb317f5f"
     },
     "files": [
         "main.blocks",
@@ -28,7 +30,7 @@
         "test.ts"
     ],
     "targetVersions": {
-        "target": "1.8.30",
+        "target": "1.12.18",
         "targetId": "arcade"
     },
     "supportedTargets": [

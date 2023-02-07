@@ -186,8 +186,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`upside_down_gravity0`, functi
     set_gravity(false)
 })
 function wait_for_select () {
-    menu_selected = false
-    while (!(menu_selected)) {
+    while (!(false)) {
         pause(1)
     }
 }
@@ -235,35 +234,49 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
             in_game = false
             sprite_map_progress.value = sprite_player_hitbox.right
             sprite_map_progress.setFlag(SpriteFlag.Invisible, false)
-            blockMenu.showMenu(["Try again", "Exit"], MenuStyle.List, MenuLocation.BottomHalf)
-            wait_for_select()
-            blockMenu.closeMenu()
-            if (blockMenu.selectedMenuIndex() == 0) {
-                fade(true, true)
-                sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
-                set_level(curr_level)
-                make_player()
-                make_player_visuals()
-                prepare_tilemap()
-                in_game = true
-                fade(false, true)
-            } else {
-                fade(true, true)
-                sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
-                game.reset()
-            }
+            menu_died = miniMenu.createMenu(
+            miniMenu.createMenuItem("", assets.image`try_again_icon`),
+            miniMenu.createMenuItem("", assets.image`exit_icon`)
+            )
+            menu_died.setFlag(SpriteFlag.Ghost, true)
+            menu_died.setFlag(SpriteFlag.RelativeToCamera, true)
+            menu_died.setDimensions(42, 20)
+            menu_died.x = scene.screenWidth() / 2
+            menu_died.y = scene.screenHeight() / 2
+            menu_died.setMenuStyleProperty(miniMenu.MenuStyleProperty.Columns, 2)
+            menu_died.setMenuStyleProperty(miniMenu.MenuStyleProperty.Border, 1)
+            menu_died.setMenuStyleProperty(miniMenu.MenuStyleProperty.BorderColor, images.colorBlock(15))
+            menu_died.setStyleProperty(miniMenu.StyleKind.Default, miniMenu.StyleProperty.Background, images.colorBlock(11))
+            menu_died.setStyleProperty(miniMenu.StyleKind.Default, miniMenu.StyleProperty.Foreground, images.colorBlock(1))
+            menu_died.setStyleProperty(miniMenu.StyleKind.Selected, miniMenu.StyleProperty.Background, images.colorBlock(1))
+            menu_died.setStyleProperty(miniMenu.StyleKind.Selected, miniMenu.StyleProperty.Foreground, images.colorBlock(11))
+            menu_died.setStyleProperty(miniMenu.StyleKind.All, miniMenu.StyleProperty.IconOnly, 1)
+            menu_died.onButtonPressed(controller.A, function (selection, selectedIndex) {
+                menu_died.close()
+                if (selectedIndex == 0) {
+                    fade(true, true)
+                    sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
+                    set_level(curr_level)
+                    make_player()
+                    make_player_visuals()
+                    prepare_tilemap()
+                    in_game = true
+                    fade(false, true)
+                } else {
+                    fade(true, true)
+                    sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
+                    game.reset()
+                }
+            })
         })
     }
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`teleport_3_from`, function (sprite, location) {
     teleport_player(assets.tile`teleport_3_to`)
 })
-blockMenu.onMenuOptionSelected(function (option, index) {
-    menu_selected = true
-})
 let colliding_dirs = ""
+let menu_died: miniMenu.MenuSprite = null
 let sprite_map_progress: StatusBarSprite = null
-let menu_selected = false
 let sprite_flag: Sprite = null
 let curr_level = 0
 let player_rotations_flipped: Image[] = []
@@ -301,8 +314,7 @@ in_game = false
 won = false
 upside_down = false
 mode = 0
-blockMenu.setColors(12, 11)
-set_level(0)
+set_level(3)
 make_player()
 make_player_visuals()
 make_map_progress_bar()

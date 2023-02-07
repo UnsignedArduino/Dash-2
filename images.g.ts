@@ -94,11 +94,56 @@ namespace myImages {
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 `;
+            case "image7":
+            case "try_again_icon":return img`
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . c c c c c c c c . . . . . 
+. . c c c c c c c c c c . . . . 
+. . c c . . . . . . c c . . . . 
+. . c c . . . . . . c c . . . . 
+. . c c . . . . . . c c . . . . 
+. . c c . . . . c c c c c c . . 
+. . c c . . . . c c c c c c . . 
+. . c c . . . . . c c c c . . . 
+. . c c . . . . . . c c . . . . 
+. . c c . . . . . . . . . . . . 
+. . c c c c c c c c c c . . . . 
+. . . c c c c c c c c c . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+`;
+            case "image8":
+            case "exit_icon":return img`
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . c c c c c c c c . . . . . . 
+. . c . . . . . . c . . . . . . 
+. . c . . . . . . c . . . . . . 
+. . c . . . . . . c . c . . . . 
+. . c . . . . . . . . c c . . . 
+. . c . . c c c c c c c c c . . 
+. . c . . c c c c c c c c c . . 
+. . c . . . . . . . . c c . . . 
+. . c . . . . . . c . c . . . . 
+. . c . . . . . . c . . . . . . 
+. . c . . . . . . c . . . . . . 
+. . c c c c c c c c . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+`;
         }
         return null;
     })
 
     helpers._registerFactory("animation", function(name: string) {
+        switch(helpers.stringTrim(name)) {
+
+        }
+        return null;
+    })
+
+    helpers._registerFactory("song", function(name: string) {
         switch(helpers.stringTrim(name)) {
 
         }

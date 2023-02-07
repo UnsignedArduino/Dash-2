@@ -29,6 +29,16 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "player_wings"
     },
+    "image7": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAMDMzMzMDAAAzMzMzMzMAADMAAAAAMwAAMwAAAAAzAAAzAAAAADMAADMAAAAAMwAAMwAwAwAzAAAzADAzADMAADMzMzMDMwAAMDMzMwMzAAAAADAzAAAAAAAAMAMAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "try_again_icon"
+    },
+    "image8": {
+        "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAMzMzMzMzAAADAAAAADAAAAMAAAAAMAAAAwAwAwAwAAADADADADAAAAMAMAMAMAAAAwAwAwAwAAAzMzADMzMAAAAAMAMAAAAAADAzMwMAAAAAADMzAAAAAAAAMAMAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "exit_icon"
+    },
     "*": {
         "mimeType": "image/x-mkcd-f4",
         "dataEncoding": "base64",
