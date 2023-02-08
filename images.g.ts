@@ -170,6 +170,25 @@ f b b b b b b b b b b b b b b f
             case "blank_px":return img`
 . 
 `;
+            case "image11":
+            case "play_button_selected":return img`
+. f f f f f f f f f f f f f f . 
+f b b b b b b b b b b b b b b f 
+f b b b b b b b b b b b b b b f 
+f b b b 7 b b b b b b b b b b f 
+f b b b 7 7 7 b b b b b b b b f 
+f b b b 7 7 7 7 7 b b b b b b f 
+f b b b 7 7 7 7 7 7 7 b b b b f 
+f b b b 7 7 7 7 7 7 7 7 b b b f 
+f b b b 7 7 7 7 7 7 7 7 b b b f 
+f b b b 7 7 7 7 7 7 7 b b b b f 
+f b b b 7 7 7 7 7 b b b b b b f 
+f b b b 7 7 7 b b b b b b b b f 
+f b b b 7 b b b b b b b b b b f 
+f b b b b b b b b b b b b b b f 
+f b b b b b b b b b b b b b b f 
+. f f f f f f f f f f f f f f . 
+`;
         }
         return null;
     })

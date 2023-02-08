@@ -49,6 +49,11 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "blank_px"
     },
+    "image11": {
+        "data": "hwQQABAAAADw////////D7+7u7u7u7v7v7u7u7u7u/u/u7u7u7u7+797d3d3d7f7v7t3d3d3u/u/u3d3d3e7+7+7e3d3t7v7v7t7d3e3u/u/u7t3d7u7+7+7u3d3u7v7v7u7e7e7u/u/u7u7u7u7+7+7u7u7u7v7v7u7u7u7u/vw////////Dw==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "play_button_selected"
+    },
     "anim2": {
         "namespace": "myAnimations",
         "id": "anim2",

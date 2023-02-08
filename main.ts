@@ -401,7 +401,6 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`jump`, function (sprite, loca
     player_jump()
 })
 let colliding_dirs = ""
-let sprite_button: Sprite = null
 let images_button_list_selected: Image[] = []
 let images_button_list: Image[] = []
 let sprite_map_progress: StatusBarSprite = null
@@ -420,6 +419,7 @@ let sprite_player: Sprite = null
 let sprite_player_hitbox: Sprite = null
 let button_list_selected = 0
 let sprites_button_list: Sprite[] = []
+let sprite_button: Sprite = null
 let mode = 0
 let upside_down = false
 let won = false
@@ -458,12 +458,41 @@ make_player()
 make_player_visuals()
 make_map_progress_bar()
 prepare_tilemap()
+let sprites_splash_texts: TextSprite[] = []
+let sprite_text = textsprite.create("Dash! 2", 0, 15)
+sprite_text.setMaxFontHeight(16)
+sprite_text.setOutline(1, 11)
+sprite_text.top = 2
+sprite_text.left = 2
+sprite_text.setFlag(SpriteFlag.Ghost, true)
+sprite_text.setFlag(SpriteFlag.RelativeToCamera, true)
+sprites_splash_texts.push(sprite_text)
+sprite_text = textsprite.create("A game by UnsignedArduino", 0, 15)
+sprite_text.setOutline(1, 11)
+sprite_text.top = 20
+sprite_text.left = 4
+sprite_text.setFlag(SpriteFlag.Ghost, true)
+sprite_text.setFlag(SpriteFlag.RelativeToCamera, true)
+sprites_splash_texts.push(sprite_text)
+sprite_button = sprites.create(assets.image`play_button_selected`, SpriteKind.Player)
+sprite_button.x = scene.screenWidth() / 2
+sprite_button.y = scene.screenHeight() / 2
+sprite_button.setFlag(SpriteFlag.Ghost, true)
+sprite_button.setFlag(SpriteFlag.RelativeToCamera, true)
+sprite_button.setFlag(SpriteFlag.AutoDestroy, true)
 in_splash = true
 timer.background(function () {
     fade(false, true)
     while (!(controller.A.isPressed())) {
         pause(0)
     }
+    for (let sprite_text of sprites_splash_texts) {
+        sprite_text.setFlag(SpriteFlag.AutoDestroy, true)
+        sprite_text.ay = -2000
+        sprite_text.vy = -200
+    }
+    sprite_button.ay = 2000
+    sprite_button.vy = 500
     fade(true, true)
     pause(1000)
     if (upside_down) {
