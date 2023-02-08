@@ -98,7 +98,11 @@ function set_level (level_num: number) {
     upside_down = false
     mode = 0
     scene.setBackgroundColor(13)
-    tiles.loadMap(tiles.copyMap(all_levels[level_num]))
+    if (level_num == -1) {
+        tiles.loadMap(tiles.copyMap(splash_level))
+    } else {
+        tiles.loadMap(tiles.copyMap(all_levels[level_num]))
+    }
     for (let tile of [assets.tile`block`, assets.tile`upper_slab`, assets.tile`lower_slab`]) {
         for (let location of tiles.getTilesByType(tile)) {
             tiles.setWallAt(location, true)
@@ -125,6 +129,18 @@ function prepare_tilemap () {
     sprite_flag.setFlag(SpriteFlag.Invisible, in_splash)
     tiles.placeOnRandomTile(sprite_flag, assets.tile`end_tile`)
     tiles.setTileAt(tiles.getTilesByType(assets.tile`end_tile`)[0], assets.tile`transparency8`)
+    if (tiles.getTilesByType(assets.tile`attempt_counts_text`).length > 0) {
+        location = tiles.getTilesByType(assets.tile`attempt_counts_text`)[0]
+        tiles.setTileAt(location, assets.tile`transparency8`)
+        if (spriteutils.isDestroyed(sprite_attempt_label)) {
+            sprite_attempt_label = textsprite.create("", 0, 12)
+        }
+        sprite_attempt_label.setText("Attempt " + level_attempts)
+        sprite_attempt_label.top = location.top
+        sprite_attempt_label.left = location.left
+        sprite_attempt_label.setFlag(SpriteFlag.AutoDestroy, true)
+        sprite_attempt_label.setFlag(SpriteFlag.Ghost, true)
+    }
     multilights.addLightSource(sprite_flag, 8)
     multilights.toggleLighting(NIGHT_MODE)
 }
@@ -330,6 +346,7 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
                     })
                     if (button_list_selected == 0) {
                         fade(true, true)
+                        level_attempts += 1
                         set_level(curr_level)
                         make_player()
                         make_player_visuals()
@@ -404,6 +421,8 @@ let colliding_dirs = ""
 let images_button_list_selected: Image[] = []
 let images_button_list: Image[] = []
 let sprite_map_progress: StatusBarSprite = null
+let sprite_attempt_label: TextSprite = null
+let location: tiles.Location = null
 let sprite_flag: Sprite = null
 let curr_level = 0
 let player_rotations_flipped: Image[] = []
@@ -419,6 +438,7 @@ let sprite_player: Sprite = null
 let sprite_player_hitbox: Sprite = null
 let button_list_selected = 0
 let sprites_button_list: Sprite[] = []
+let level_attempts = 0
 let sprite_button: Sprite = null
 let mode = 0
 let upside_down = false
@@ -426,6 +446,7 @@ let won = false
 let in_splash = false
 let in_game = false
 let all_levels: tiles.WorldMap[] = []
+let splash_level: tiles.WorldMap = null
 let jump_count = 0
 let NIGHT_MODE = false
 let MAX_JUMPS = 0
@@ -440,8 +461,8 @@ GRAVITY = 500
 MAX_JUMPS = 2
 NIGHT_MODE = false
 jump_count = 0
+splash_level = tiles.createSmallMap(tilemap`splash_level`)
 all_levels = [
-tiles.createSmallMap(tilemap`splash_level`),
 tiles.createSmallMap(tilemap`level_1`),
 tiles.createSmallMap(tilemap`level_2`),
 tiles.createSmallMap(tilemap`level_3`),
@@ -453,7 +474,7 @@ in_splash = true
 won = false
 upside_down = false
 mode = 0
-set_level(0)
+set_level(-1)
 make_player()
 make_player_visuals()
 make_map_progress_bar()
@@ -501,7 +522,8 @@ timer.background(function () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Player)
     sprites.destroyAllSpritesOfKind(SpriteKind.Image)
     in_splash = false
-    set_level(1)
+    level_attempts = 1
+    set_level(0)
     make_player()
     make_player_visuals()
     prepare_tilemap()
