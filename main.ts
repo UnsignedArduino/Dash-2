@@ -107,61 +107,22 @@ function set_level (level_num: number) {
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (in_game) {
-        if (jump_count < MAX_JUMPS) {
-            if (mode == 0) {
-                if (upside_down) {
-                    jump_sprite(sprite_player_hitbox, -26)
-                } else {
-                    jump_sprite(sprite_player_hitbox, 26)
-                }
-                jump_count += 1
-                sprite_player.startEffect(effects.fire, 100)
-                timer.background(function () {
-                    if (upside_down) {
-                        for (let image2 of player_rotations_flipped) {
-                            sprite_player.setImage(image2)
-                            pause(20)
-                        }
-                    } else {
-                        for (let image2 of player_rotations) {
-                            sprite_player.setImage(image2)
-                            pause(20)
-                        }
-                    }
-                })
-            } else {
-                if (upside_down) {
-                    jump_sprite(sprite_player_hitbox, -8)
-                } else {
-                    jump_sprite(sprite_player_hitbox, 8)
-                }
-                jump_count = 0
-                animation.stopAnimation(animation.AnimationTypes.All, sprite_player_wings)
-                animation.runImageAnimation(
-                sprite_player_wings,
-                animation_flap_hard,
-                50,
-                false
-                )
-                timer.debounce("animate_flap_hard", 300, function () {
-                    animation.runImageAnimation(
-                    sprite_player_wings,
-                    animation_flap,
-                    200,
-                    true
-                    )
-                })
-            }
-        }
+        player_jump()
     }
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`teleport_2_from`, function (sprite, location) {
     teleport_player(assets.tile`teleport_2_to`)
 })
 function prepare_tilemap () {
-    tiles.setTileAt(tiles.getTilesByType(assets.tile`start_tile`)[0], assets.tile`transparency8`)
+    if (!(in_splash)) {
+        tiles.setTileAt(tiles.getTilesByType(assets.tile`start_tile`)[0], assets.tile`transparency8`)
+    } else {
+        tiles.coverAllTiles(assets.tile`start_tile`, assets.tile`myTile0`)
+        tiles.coverAllTiles(assets.tile`jump`, assets.tile`myTile0`)
+    }
     tiles.destroySpritesOfKind(SpriteKind.End)
     sprite_flag = sprites.create(assets.image`flag`, SpriteKind.End)
+    sprite_flag.setFlag(SpriteFlag.Invisible, in_splash)
     tiles.placeOnRandomTile(sprite_flag, assets.tile`end_tile`)
     tiles.setTileAt(tiles.getTilesByType(assets.tile`end_tile`)[0], assets.tile`transparency8`)
     multilights.addLightSource(sprite_flag, 8)
@@ -183,14 +144,19 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.End, function (sprite, otherSprite) {
-    sprite.ay = 0
-    sprite.setFlag(SpriteFlag.Ghost, true)
-    sprite.setFlag(SpriteFlag.AutoDestroy, true)
-    otherSprite.startEffect(effects.confetti)
-    won = true
-    multilights.toggleLighting(false)
-    if (upside_down) {
-        fade_for_gravity(true, false)
+    sprite_player_hitbox.sayText(":)")
+    if (in_game) {
+        sprite.ay = 0
+        sprite.setFlag(SpriteFlag.Ghost, true)
+        sprite.setFlag(SpriteFlag.AutoDestroy, true)
+        otherSprite.startEffect(effects.confetti)
+        won = true
+        multilights.toggleLighting(false)
+        if (upside_down) {
+            fade_for_gravity(true, false)
+        }
+    } else if (in_splash) {
+        teleport_player(assets.tile`start_tile`)
     }
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -206,7 +172,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_down0`, function (spri
     destroy_if_on_tile(sprite, assets.tile`spikes_down0`)
 })
 function destroy_if_on_tile (sprite: Sprite, tile: Image) {
-    if (spriteutils.isDestroyed(sprite)) {
+    if (spriteutils.isDestroyed(sprite) || in_splash) {
         return
     }
     if (sprite.tileKindAt(TileDirection.Center, tile)) {
@@ -382,6 +348,57 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
 scene.onOverlapTile(SpriteKind.Player, assets.tile`teleport_3_from`, function (sprite, location) {
     teleport_player(assets.tile`teleport_3_to`)
 })
+function player_jump () {
+    if (mode == 0) {
+        if (jump_count < MAX_JUMPS) {
+            if (upside_down) {
+                jump_sprite(sprite_player_hitbox, -26)
+            } else {
+                jump_sprite(sprite_player_hitbox, 26)
+            }
+            jump_count += 1
+            sprite_player.startEffect(effects.fire, 100)
+            timer.background(function () {
+                if (upside_down) {
+                    for (let image2 of player_rotations_flipped) {
+                        sprite_player.setImage(image2)
+                        pause(20)
+                    }
+                } else {
+                    for (let image2 of player_rotations) {
+                        sprite_player.setImage(image2)
+                        pause(20)
+                    }
+                }
+            })
+        }
+    } else {
+        if (upside_down) {
+            jump_sprite(sprite_player_hitbox, -8)
+        } else {
+            jump_sprite(sprite_player_hitbox, 8)
+        }
+        jump_count = 0
+        animation.stopAnimation(animation.AnimationTypes.All, sprite_player_wings)
+        animation.runImageAnimation(
+        sprite_player_wings,
+        animation_flap_hard,
+        50,
+        false
+        )
+        timer.debounce("animate_flap_hard", 300, function () {
+            animation.runImageAnimation(
+            sprite_player_wings,
+            animation_flap,
+            200,
+            true
+            )
+        })
+    }
+}
+scene.onOverlapTile(SpriteKind.Player, assets.tile`jump`, function (sprite, location) {
+    player_jump()
+})
 let colliding_dirs = ""
 let sprite_button: Sprite = null
 let images_button_list_selected: Image[] = []
@@ -405,6 +422,7 @@ let sprites_button_list: Sprite[] = []
 let mode = 0
 let upside_down = false
 let won = false
+let in_splash = false
 let in_game = false
 let all_levels: tiles.WorldMap[] = []
 let jump_count = 0
@@ -422,6 +440,7 @@ MAX_JUMPS = 2
 NIGHT_MODE = false
 jump_count = 0
 all_levels = [
+tiles.createSmallMap(tilemap`splash_level`),
 tiles.createSmallMap(tilemap`level_1`),
 tiles.createSmallMap(tilemap`level_2`),
 tiles.createSmallMap(tilemap`level_3`),
@@ -429,18 +448,20 @@ tiles.createSmallMap(tilemap`level_4`),
 tiles.createSmallMap(tilemap`level_5`)
 ]
 in_game = false
+in_splash = true
 won = false
 upside_down = false
 mode = 0
-set_level(4)
+set_level(0)
 make_player()
 make_player_visuals()
 make_map_progress_bar()
 prepare_tilemap()
-in_game = true
+in_game = false
+in_splash = true
 fade(false, false)
 game.onUpdate(function () {
-    if (in_game) {
+    if (in_game || in_splash) {
         sprite_player_hitbox.vx = 100
         if (!(spriteutils.isDestroyed(sprite_player_hitbox))) {
             spriteutils.placeAngleFrom(

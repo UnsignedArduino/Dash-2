@@ -4,11 +4,6 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "player"
     },
-    "image2": {
-        "data": "hwQBAAEAAAAAAAAA",
-        "mimeType": "image/x-mkcd-f4",
-        "displayName": "blank_px"
-    },
     "image3": {
         "data": "hwQQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMzMzMwAAAAAzMzMzAAAAADMzMzMAAAAAMzMzMwAAAAAzMzMzAAAAADMzMzMAAAAAMzMzMwAAAAAzMzMzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
         "mimeType": "image/x-mkcd-f4",
@@ -48,6 +43,11 @@
         "data": "hwQQABAAAADw////////D7+7u7u7u7v7v8zMzMzMzPu/vLu7u7vL+7+8u7u7u8v7v7y7y7y7y/u/vLvLvLvL+7+8u8u8u8v7v7y7y7y7y/u/zMzLvMzM+7+7u8u8u7v7v7vLzMy8u/u/u7vMzLu7+7+7u8u8u7v7v7u7u7u7u/vw////////Dw==",
         "mimeType": "image/x-mkcd-f4",
         "displayName": "exit_icon_selected"
+    },
+    "image2": {
+        "data": "hwQBAAEAAAAAAAAA",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "blank_px"
     },
     "anim2": {
         "namespace": "myAnimations",

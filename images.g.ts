@@ -22,10 +22,6 @@ namespace myImages {
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 `;
-            case "image2":
-            case "blank_px":return img`
-. 
-`;
             case "image3":
             case "player_hitbox":return img`
 . . . . . . . . . . . . . . . . 
@@ -169,6 +165,10 @@ f b c b b b b b b c b b b b b f
 f b c c c c c c c c b b b b b f 
 f b b b b b b b b b b b b b b f 
 . f f f f f f f f f f f f f f . 
+`;
+            case "image2":
+            case "blank_px":return img`
+. 
 `;
         }
         return null;
