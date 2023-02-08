@@ -144,7 +144,6 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.End, function (sprite, otherSprite) {
-    sprite_player_hitbox.sayText(":)")
     if (in_game) {
         sprite.ay = 0
         sprite.setFlag(SpriteFlag.Ghost, true)
@@ -256,93 +255,95 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`regular_jump`, function (spri
 sprites.onDestroyed(SpriteKind.Player, function (sprite) {
     sprite_player.destroy()
     sprite_player_hitbox.destroy()
-    if (won) {
-        timer.after(1000, function () {
-            game.over(true)
-        })
-    } else {
-        multilights.toggleLighting(false)
-        if (upside_down) {
-            fade_for_gravity(true, false)
-        }
-        timer.after(1000, function () {
-            in_game = false
-            timer.background(function () {
-                sprite_map_progress.value = sprite_player_hitbox.right
-                sprite_map_progress.bottom = 0
-                sprite_map_progress.vy = 50
-                sprite_map_progress.setFlag(SpriteFlag.Invisible, false)
-                images_button_list = [assets.image`try_again_icon`, assets.image`exit_icon`]
-                images_button_list_selected = [assets.image`try_again_icon_selected`, assets.image`exit_icon_selected`]
-                sprites_button_list = []
-                button_list_selected = 0
-                for (let index = 0; index <= images_button_list.length - 1; index++) {
-                    sprite_button = sprites.create(images_button_list[index], SpriteKind.Button)
-                    sprite_button.setFlag(SpriteFlag.Ghost, true)
-                    sprite_button.setFlag(SpriteFlag.RelativeToCamera, true)
-                    sprite_button.x = (index + 1) * (scene.screenWidth() / (images_button_list.length + 1))
-                    sprite_button.top = scene.screenHeight()
-                    sprite_button.vy = -2000
-                    sprites_button_list.push(sprite_button)
-                }
-                timer.background(function () {
-                    while (sprites_button_list[0].y > scene.screenHeight() * 0.55) {
-                        pause(0)
-                    }
-                    for (let index = 0; index <= sprites_button_list.length - 1; index++) {
-                        sprites_button_list[index].y = scene.screenHeight() / 2
-                        sprites_button_list[index].vy = 0
-                    }
-                })
-                timer.background(function () {
-                    while (sprite_map_progress.top < 2) {
-                        pause(0)
-                    }
-                    sprite_map_progress.top = 2
-                    sprite_map_progress.vy = 0
-                })
-                while (true) {
-                    for (let index = 0; index <= sprites_button_list.length - 1; index++) {
-                        sprite_button = sprites_button_list[index]
-                        if (index == button_list_selected) {
-                            sprite_button.setImage(images_button_list_selected[index])
-                        } else {
-                            sprite_button.setImage(images_button_list[index])
-                        }
-                    }
-                    if (controller.A.isPressed()) {
-                        break;
-                    }
-                    pause(0)
-                }
-                for (let index = 0; index <= sprites_button_list.length - 1; index++) {
-                    sprites_button_list[index].setFlag(SpriteFlag.AutoDestroy, true)
-                    sprites_button_list[index].vy = 2000
-                }
-                sprite_map_progress.vy = -50
-                timer.background(function () {
-                    while (sprite_map_progress.bottom > 0) {
-                        pause(0)
-                    }
-                    sprite_map_progress.bottom = 0
-                    sprite_map_progress.vy = 0
-                    sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
-                })
-                if (button_list_selected == 0) {
-                    fade(true, true)
-                    set_level(curr_level)
-                    make_player()
-                    make_player_visuals()
-                    prepare_tilemap()
-                    in_game = true
-                    fade(false, true)
-                } else {
-                    fade(true, true)
-                    sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
-                    game.reset()
-                }
+    if (!(in_splash)) {
+        if (won) {
+            timer.after(1000, function () {
+                game.over(true)
             })
-        })
+        } else {
+            multilights.toggleLighting(false)
+            if (upside_down) {
+                fade_for_gravity(true, false)
+            }
+            timer.after(1000, function () {
+                in_game = false
+                timer.background(function () {
+                    sprite_map_progress.value = sprite_player_hitbox.right
+                    sprite_map_progress.bottom = 0
+                    sprite_map_progress.vy = 50
+                    sprite_map_progress.setFlag(SpriteFlag.Invisible, false)
+                    images_button_list = [assets.image`try_again_icon`, assets.image`exit_icon`]
+                    images_button_list_selected = [assets.image`try_again_icon_selected`, assets.image`exit_icon_selected`]
+                    sprites_button_list = []
+                    button_list_selected = 0
+                    for (let index = 0; index <= images_button_list.length - 1; index++) {
+                        sprite_button = sprites.create(images_button_list[index], SpriteKind.Button)
+                        sprite_button.setFlag(SpriteFlag.Ghost, true)
+                        sprite_button.setFlag(SpriteFlag.RelativeToCamera, true)
+                        sprite_button.x = (index + 1) * (scene.screenWidth() / (images_button_list.length + 1))
+                        sprite_button.top = scene.screenHeight()
+                        sprite_button.vy = -2000
+                        sprites_button_list.push(sprite_button)
+                    }
+                    timer.background(function () {
+                        while (sprites_button_list[0].y > scene.screenHeight() * 0.55) {
+                            pause(0)
+                        }
+                        for (let index = 0; index <= sprites_button_list.length - 1; index++) {
+                            sprites_button_list[index].y = scene.screenHeight() / 2
+                            sprites_button_list[index].vy = 0
+                        }
+                    })
+                    timer.background(function () {
+                        while (sprite_map_progress.top < 2) {
+                            pause(0)
+                        }
+                        sprite_map_progress.top = 2
+                        sprite_map_progress.vy = 0
+                    })
+                    while (true) {
+                        for (let index = 0; index <= sprites_button_list.length - 1; index++) {
+                            sprite_button = sprites_button_list[index]
+                            if (index == button_list_selected) {
+                                sprite_button.setImage(images_button_list_selected[index])
+                            } else {
+                                sprite_button.setImage(images_button_list[index])
+                            }
+                        }
+                        if (controller.A.isPressed()) {
+                            break;
+                        }
+                        pause(0)
+                    }
+                    for (let index = 0; index <= sprites_button_list.length - 1; index++) {
+                        sprites_button_list[index].setFlag(SpriteFlag.AutoDestroy, true)
+                        sprites_button_list[index].vy = 2000
+                    }
+                    sprite_map_progress.vy = -50
+                    timer.background(function () {
+                        while (sprite_map_progress.bottom > 0) {
+                            pause(0)
+                        }
+                        sprite_map_progress.bottom = 0
+                        sprite_map_progress.vy = 0
+                        sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
+                    })
+                    if (button_list_selected == 0) {
+                        fade(true, true)
+                        set_level(curr_level)
+                        make_player()
+                        make_player_visuals()
+                        prepare_tilemap()
+                        in_game = true
+                        fade(false, true)
+                    } else {
+                        fade(true, true)
+                        sprite_map_progress.setFlag(SpriteFlag.Invisible, true)
+                        game.reset()
+                    }
+                })
+            })
+        }
     }
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`teleport_3_from`, function (sprite, location) {
@@ -457,9 +458,27 @@ make_player()
 make_player_visuals()
 make_map_progress_bar()
 prepare_tilemap()
-in_game = false
 in_splash = true
-fade(false, false)
+timer.background(function () {
+    fade(false, true)
+    while (!(controller.A.isPressed())) {
+        pause(0)
+    }
+    fade(true, true)
+    pause(1000)
+    if (upside_down) {
+        fade_for_gravity(true, false)
+    }
+    sprites.destroyAllSpritesOfKind(SpriteKind.Player)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Image)
+    in_splash = false
+    set_level(1)
+    make_player()
+    make_player_visuals()
+    prepare_tilemap()
+    in_game = true
+    fade(false, true)
+})
 game.onUpdate(function () {
     if (in_game || in_splash) {
         sprite_player_hitbox.vx = 100
