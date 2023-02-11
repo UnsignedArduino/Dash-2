@@ -498,73 +498,81 @@ sprite_text.left = 4
 sprite_text.setFlag(SpriteFlag.Ghost, true)
 sprite_text.setFlag(SpriteFlag.RelativeToCamera, true)
 sprites_splash_texts.push(sprite_text)
-sprite_button = sprites.create(assets.image`play_button_selected`, SpriteKind.Button)
-sprite_button.x = scene.screenWidth() / 2
-sprite_button.top = scene.screenHeight()
-sprite_button.setFlag(SpriteFlag.Ghost, true)
-sprite_button.setFlag(SpriteFlag.RelativeToCamera, true)
-sprite_button.ay = -2000
-sprite_button.vy = -500
 in_splash = true
 timer.background(function () {
-    timer.background(function () {
-        while (sprite_button.y > scene.screenHeight() / 2) {
-            pause(0)
-        }
-        sprite_button.y = scene.screenHeight() / 2
-        sprite_button.ay = 0
-        sprite_button.vy = 0
-    })
     fade(false, true)
-    while (!(controller.A.isPressed())) {
-        pause(0)
-    }
-    sprite_button.setFlag(SpriteFlag.AutoDestroy, true)
-    sprite_button.ay = 2000
-    sprite_button.vy = 500
-    menu_option_levels = []
-    for (let index = 0; index <= all_levels.length - 1; index++) {
-        menu_option_levels.push(miniMenu.createMenuItem("Level " + (index + 1)))
-    }
-    menu = miniMenu.createMenuFromArray(menu_option_levels)
-    menu.top = 32
-    menu.left = 4
-    menu.z = 100
-    menu.setDimensions(scene.screenWidth() - (menu.left + 4), scene.screenHeight() - (menu.top + 4))
-    menu.top = scene.screenHeight()
-    menu.setTitle("Select a level:")
-    menu.setFlag(SpriteFlag.Ghost, true)
-    menu.setFlag(SpriteFlag.RelativeToCamera, true)
-    menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.Border, 1)
-    menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.BorderColor, images.colorBlock(12))
-    menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.BackgroundColor, images.colorBlock(11))
-    menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.ScrollIndicatorColor, 0)
-    menu.setStyleProperty(miniMenu.StyleKind.Default, miniMenu.StyleProperty.Background, images.colorBlock(11))
-    menu.setStyleProperty(miniMenu.StyleKind.Default, miniMenu.StyleProperty.Foreground, images.colorBlock(12))
-    menu.setStyleProperty(miniMenu.StyleKind.Selected, miniMenu.StyleProperty.Background, images.colorBlock(12))
-    menu.setStyleProperty(miniMenu.StyleKind.Selected, miniMenu.StyleProperty.Foreground, images.colorBlock(11))
-    menu.setStyleProperty(miniMenu.StyleKind.Title, miniMenu.StyleProperty.Background, images.colorBlock(11))
-    menu.setStyleProperty(miniMenu.StyleKind.Title, miniMenu.StyleProperty.Foreground, images.colorBlock(15))
-    menu.onButtonPressed(controller.A, function (selection, selectedIndex) {
-        menu_selected = selectedIndex
-    })
-    menu_selected = -1
-    menu.ay = -2000
-    menu.vy = -500
-    timer.background(function () {
-        while (menu.top > 32) {
+    while (true) {
+        sprite_button = sprites.create(assets.image`play_button_selected`, SpriteKind.Button)
+        sprite_button.x = scene.screenWidth() / 2
+        sprite_button.top = scene.screenHeight()
+        sprite_button.setFlag(SpriteFlag.Ghost, true)
+        sprite_button.setFlag(SpriteFlag.RelativeToCamera, true)
+        sprite_button.ay = -1000
+        sprite_button.vy = -250
+        timer.background(function () {
+            while (sprite_button.y > scene.screenHeight() / 2) {
+                pause(0)
+            }
+            sprite_button.y = scene.screenHeight() / 2
+            sprite_button.ay = 0
+            sprite_button.vy = 0
+        })
+        while (controller.A.isPressed()) {
             pause(0)
         }
+        while (!(controller.A.isPressed())) {
+            pause(0)
+        }
+        sprite_button.setFlag(SpriteFlag.AutoDestroy, true)
+        sprite_button.ay = 2000
+        sprite_button.vy = 500
+        menu_option_levels = [miniMenu.createMenuItem("Back")]
+        for (let index = 0; index <= all_levels.length - 1; index++) {
+            menu_option_levels.push(miniMenu.createMenuItem("Level " + (index + 1)))
+        }
+        menu = miniMenu.createMenuFromArray(menu_option_levels)
         menu.top = 32
-        menu.ay = 0
-        menu.vy = 0
-    })
-    while (menu_selected == -1) {
-        pause(0)
+        menu.left = 4
+        menu.z = 100
+        menu.setDimensions(scene.screenWidth() - (menu.left + 4), scene.screenHeight() - (menu.top + 4))
+        menu.top = scene.screenHeight()
+        menu.setTitle("Select a level:")
+        menu.setFlag(SpriteFlag.Ghost, true)
+        menu.setFlag(SpriteFlag.RelativeToCamera, true)
+        menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.Border, 1)
+        menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.BorderColor, images.colorBlock(12))
+        menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.BackgroundColor, images.colorBlock(11))
+        menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.ScrollIndicatorColor, 0)
+        menu.setStyleProperty(miniMenu.StyleKind.Default, miniMenu.StyleProperty.Background, images.colorBlock(11))
+        menu.setStyleProperty(miniMenu.StyleKind.Default, miniMenu.StyleProperty.Foreground, images.colorBlock(12))
+        menu.setStyleProperty(miniMenu.StyleKind.Selected, miniMenu.StyleProperty.Background, images.colorBlock(12))
+        menu.setStyleProperty(miniMenu.StyleKind.Selected, miniMenu.StyleProperty.Foreground, images.colorBlock(11))
+        menu.setStyleProperty(miniMenu.StyleKind.Title, miniMenu.StyleProperty.Background, images.colorBlock(11))
+        menu.setStyleProperty(miniMenu.StyleKind.Title, miniMenu.StyleProperty.Foreground, images.colorBlock(15))
+        menu.onButtonPressed(controller.A, function (selection, selectedIndex) {
+            menu_selected = selectedIndex
+        })
+        menu_selected = -1
+        menu.ay = -2000
+        menu.vy = -500
+        timer.background(function () {
+            while (menu.top > 32) {
+                pause(0)
+            }
+            menu.top = 32
+            menu.ay = 0
+            menu.vy = 0
+        })
+        while (menu_selected == -1) {
+            pause(0)
+        }
+        menu.setFlag(SpriteFlag.AutoDestroy, true)
+        menu.ay = 2000
+        menu.vy = 500
+        if (menu_selected > 0) {
+            break;
+        }
     }
-    menu.setFlag(SpriteFlag.AutoDestroy, true)
-    menu.ay = 2000
-    menu.vy = 500
     for (let sprite_text of sprites_splash_texts) {
         sprite_text.setFlag(SpriteFlag.AutoDestroy, true)
         sprite_text.ay = -2000
@@ -579,7 +587,7 @@ timer.background(function () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Image)
     in_splash = false
     level_attempts = 1
-    set_level(menu_selected)
+    set_level(menu_selected - 1)
     make_player()
     make_player_visuals()
     prepare_tilemap()
