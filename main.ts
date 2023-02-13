@@ -140,8 +140,11 @@ function prepare_tilemap () {
         sprite_attempt_label.left = location.left
         sprite_attempt_label.setFlag(SpriteFlag.AutoDestroy, true)
         sprite_attempt_label.setFlag(SpriteFlag.Ghost, true)
+        multilights.addLightSource(sprite_attempt_label, 20)
     }
-    multilights.addLightSource(sprite_flag, 8)
+    if (!(in_splash)) {
+        multilights.addLightSource(sprite_flag, 8)
+    }
     multilights.toggleLighting(NIGHT_MODE)
 }
 function set_mode (m: number) {
@@ -298,6 +301,7 @@ sprites.onDestroyed(SpriteKind.Player, function (sprite) {
                         sprite_button.setFlag(SpriteFlag.RelativeToCamera, true)
                         sprite_button.x = (index + 1) * (scene.screenWidth() / (images_button_list.length + 1))
                         sprite_button.top = scene.screenHeight()
+                        sprite_button.z = 100
                         sprite_button.vy = -2000
                         sprites_button_list.push(sprite_button)
                     }
@@ -488,6 +492,7 @@ sprite_text.setMaxFontHeight(16)
 sprite_text.setOutline(1, 11)
 sprite_text.top = 2
 sprite_text.left = 2
+sprite_text.z = 100
 sprite_text.setFlag(SpriteFlag.Ghost, true)
 sprite_text.setFlag(SpriteFlag.RelativeToCamera, true)
 sprites_splash_texts.push(sprite_text)
@@ -495,6 +500,7 @@ sprite_text = textsprite.create("A game by UnsignedArduino", 0, 15)
 sprite_text.setOutline(1, 11)
 sprite_text.top = 20
 sprite_text.left = 4
+sprite_text.z = 100
 sprite_text.setFlag(SpriteFlag.Ghost, true)
 sprite_text.setFlag(SpriteFlag.RelativeToCamera, true)
 sprites_splash_texts.push(sprite_text)
@@ -505,6 +511,7 @@ timer.background(function () {
         sprite_button = sprites.create(assets.image`play_button_selected`, SpriteKind.Button)
         sprite_button.x = scene.screenWidth() / 2
         sprite_button.top = scene.screenHeight()
+        sprite_button.z = 100
         sprite_button.setFlag(SpriteFlag.Ghost, true)
         sprite_button.setFlag(SpriteFlag.RelativeToCamera, true)
         sprite_button.ay = -1000
