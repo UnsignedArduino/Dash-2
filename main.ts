@@ -162,6 +162,20 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
         }
     }
 })
+function set_menu_css () {
+    menu = miniMenu.createMenuFromArray([])
+    menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.Border, 1)
+    menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.BorderColor, images.colorBlock(12))
+    menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.BackgroundColor, images.colorBlock(11))
+    menu.setStyleProperty(miniMenu.StyleKind.Default, miniMenu.StyleProperty.Background, images.colorBlock(11))
+    menu.setStyleProperty(miniMenu.StyleKind.Default, miniMenu.StyleProperty.Foreground, images.colorBlock(12))
+    menu.setStyleProperty(miniMenu.StyleKind.Selected, miniMenu.StyleProperty.Background, images.colorBlock(12))
+    menu.setStyleProperty(miniMenu.StyleKind.Selected, miniMenu.StyleProperty.Foreground, images.colorBlock(11))
+    menu.setStyleProperty(miniMenu.StyleKind.Title, miniMenu.StyleProperty.Background, images.colorBlock(11))
+    menu.setStyleProperty(miniMenu.StyleKind.Title, miniMenu.StyleProperty.Foreground, images.colorBlock(15))
+    menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.UseAsTemplate, 1)
+    sprites.destroy(menu)
+}
 sprites.onOverlap(SpriteKind.Player, SpriteKind.End, function (sprite, otherSprite) {
     if (in_game) {
         sprite.ay = 0
@@ -443,9 +457,10 @@ let sprite_player_hitbox: Sprite = null
 let button_list_selected = 0
 let sprites_button_list: Sprite[] = []
 let level_attempts = 0
-let menu_selected = 0
 let menu: miniMenu.MenuSprite = null
 let menu_option_levels: miniMenu.MenuItem[] = []
+let menu_selected_level = 0
+let menu_selected = 0
 let sprite_button: Sprite = null
 let mode = 0
 let upside_down = false
@@ -481,6 +496,7 @@ in_splash = true
 won = false
 upside_down = false
 mode = 0
+set_menu_css()
 set_level(-1)
 make_player()
 make_player_visuals()
@@ -533,50 +549,82 @@ timer.background(function () {
         sprite_button.setFlag(SpriteFlag.AutoDestroy, true)
         sprite_button.ay = 2000
         sprite_button.vy = 500
-        menu_option_levels = [miniMenu.createMenuItem("Back")]
-        for (let index = 0; index <= all_levels.length - 1; index++) {
-            menu_option_levels.push(miniMenu.createMenuItem("Level " + (index + 1)))
-        }
-        menu = miniMenu.createMenuFromArray(menu_option_levels)
-        menu.top = 32
-        menu.left = 4
-        menu.z = 100
-        menu.setDimensions(scene.screenWidth() - (menu.left + 4), scene.screenHeight() - (menu.top + 4))
-        menu.top = scene.screenHeight()
-        menu.setTitle("Select a level:")
-        menu.setFlag(SpriteFlag.Ghost, true)
-        menu.setFlag(SpriteFlag.RelativeToCamera, true)
-        menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.Border, 1)
-        menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.BorderColor, images.colorBlock(12))
-        menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.BackgroundColor, images.colorBlock(11))
-        menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.ScrollIndicatorColor, 0)
-        menu.setStyleProperty(miniMenu.StyleKind.Default, miniMenu.StyleProperty.Background, images.colorBlock(11))
-        menu.setStyleProperty(miniMenu.StyleKind.Default, miniMenu.StyleProperty.Foreground, images.colorBlock(12))
-        menu.setStyleProperty(miniMenu.StyleKind.Selected, miniMenu.StyleProperty.Background, images.colorBlock(12))
-        menu.setStyleProperty(miniMenu.StyleKind.Selected, miniMenu.StyleProperty.Foreground, images.colorBlock(11))
-        menu.setStyleProperty(miniMenu.StyleKind.Title, miniMenu.StyleProperty.Background, images.colorBlock(11))
-        menu.setStyleProperty(miniMenu.StyleKind.Title, miniMenu.StyleProperty.Foreground, images.colorBlock(15))
-        menu.onButtonPressed(controller.A, function (selection, selectedIndex) {
-            menu_selected = selectedIndex
-        })
         menu_selected = -1
-        menu.ay = -2000
-        menu.vy = -500
-        timer.background(function () {
-            while (menu.top > 32) {
+        menu_selected_level = -1
+        while (true) {
+            menu_option_levels = [miniMenu.createMenuItem("Back")]
+            for (let index = 0; index <= all_levels.length - 1; index++) {
+                menu_option_levels.push(miniMenu.createMenuItem("Level " + (index + 1)))
+            }
+            menu = miniMenu.createMenuFromArray(menu_option_levels)
+            menu.top = 32
+            menu.left = 4
+            menu.z = 100
+            menu.setDimensions(scene.screenWidth() - (menu.left + 4), scene.screenHeight() - (menu.top + 4))
+            menu.top = scene.screenHeight()
+            menu.setTitle("Select a level:")
+            menu.setFlag(SpriteFlag.Ghost, true)
+            menu.setFlag(SpriteFlag.RelativeToCamera, true)
+            menu.setMenuStyleProperty(miniMenu.MenuStyleProperty.ScrollIndicatorColor, 1)
+            menu.onButtonPressed(controller.A, function (selection, selectedIndex) {
+                menu_selected_level = selectedIndex
+            })
+            menu_selected_level = -1
+            menu.ay = -2000
+            menu.vy = -500
+            timer.background(function () {
+                while (menu.top > 32) {
+                    pause(0)
+                }
+                menu.top = 32
+                menu.ay = 0
+                menu.vy = 0
+            })
+            while (menu_selected_level == -1) {
                 pause(0)
             }
-            menu.top = 32
-            menu.ay = 0
-            menu.vy = 0
-        })
-        while (menu_selected == -1) {
-            pause(0)
+            menu.setFlag(SpriteFlag.AutoDestroy, true)
+            menu.ay = 2000
+            menu.vy = 500
+            if (menu_selected_level > 0) {
+                menu = miniMenu.createMenuFromArray([miniMenu.createMenuItem("Back"), miniMenu.createMenuItem("Normal"), miniMenu.createMenuItem("Hard - reduced visibility!")])
+                menu.top = 32
+                menu.left = 4
+                menu.z = 100
+                menu.setDimensions(scene.screenWidth() - (menu.left + 4), scene.screenHeight() - (menu.top + 4))
+                menu.top = scene.screenHeight()
+                menu.setTitle("Select difficulty:")
+                menu.setFlag(SpriteFlag.Ghost, true)
+                menu.setFlag(SpriteFlag.RelativeToCamera, true)
+                menu.onButtonPressed(controller.A, function (selection, selectedIndex) {
+                    menu_selected = selectedIndex
+                })
+                menu.ay = -2000
+                menu.vy = -500
+                timer.background(function () {
+                    while (menu.top > 32) {
+                        pause(0)
+                    }
+                    menu.top = 32
+                    menu.ay = 0
+                    menu.vy = 0
+                })
+                menu_selected = -1
+                while (menu_selected == -1) {
+                    pause(0)
+                }
+                menu.setFlag(SpriteFlag.AutoDestroy, true)
+                menu.ay = 2000
+                menu.vy = 500
+                if (menu_selected > 0 && menu_selected_level > 0) {
+                    NIGHT_MODE = menu_selected == 2
+                    break;
+                }
+            } else {
+                break;
+            }
         }
-        menu.setFlag(SpriteFlag.AutoDestroy, true)
-        menu.ay = 2000
-        menu.vy = 500
-        if (menu_selected > 0) {
+        if (menu_selected > 0 && menu_selected_level > 0) {
             break;
         }
     }
@@ -594,7 +642,7 @@ timer.background(function () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Image)
     in_splash = false
     level_attempts = 1
-    set_level(menu_selected - 1)
+    set_level(menu_selected_level - 1)
     make_player()
     make_player_visuals()
     prepare_tilemap()
