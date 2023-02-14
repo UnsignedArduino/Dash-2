@@ -489,7 +489,8 @@ tiles.createSmallMap(tilemap`level_1`),
 tiles.createSmallMap(tilemap`level_2`),
 tiles.createSmallMap(tilemap`level_3`),
 tiles.createSmallMap(tilemap`level_4`),
-tiles.createSmallMap(tilemap`level_5`)
+tiles.createSmallMap(tilemap`level_5`),
+tiles.createSmallMap(tilemap`level_6`)
 ]
 in_game = false
 in_splash = true
