@@ -58,7 +58,7 @@ function update_player_visuals () {
         animation_flap = animation_upside_down_flap
         animation_flap_hard = animation_upside_down_flap_hard
     }
-    sprite_player_wings.setFlag(SpriteFlag.Invisible, mode == 0)
+    sprite_player_wings.setFlag(SpriteFlag.Invisible, mode != 1)
     animation.runImageAnimation(
     sprite_player_wings,
     animation_flap,
@@ -71,10 +71,10 @@ function make_player_visuals () {
     sprite_player.setFlag(SpriteFlag.Ghost, true)
     sprite_player.setFlag(SpriteFlag.Invisible, DEBUG)
     multilights.addLightSource(sprite_player, 16)
-    player_rotations = scaling.createRotations(assets.image`player`, 10)
-    player_rotations.push(assets.image`player`)
-    player_rotations_flipped = scaling.createRotations(assets.image`player_flipped`, 10)
-    player_rotations_flipped.push(assets.image`player_flipped`)
+    animation_player_rotations = scaling.createRotations(assets.image`player`, 10)
+    animation_player_rotations.push(assets.image`player`)
+    animation_player_rotations_flipped = scaling.createRotations(assets.image`player_flipped`, 10)
+    animation_player_rotations_flipped.push(assets.image`player_flipped`)
     sprite_player_wings = sprites.create(assets.image`player_wings`, SpriteKind.Image)
     animation_original_flap = assets.animation`flap`
     animation_original_flap_hard = assets.animation`flap_hard`
@@ -244,6 +244,9 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`infinite_jump`, function (spr
 scene.onOverlapTile(SpriteKind.Player, assets.tile`spikes_right0`, function (sprite, location) {
     destroy_if_on_tile(sprite, assets.tile`spikes_right0`)
 })
+scene.onOverlapTile(SpriteKind.Player, assets.tile`gravity_stick`, function (sprite, location) {
+    set_mode(2)
+})
 function fade (_in: boolean, block: boolean) {
     if (_in) {
         color.startFade(color.originalPalette, color.Black, 500)
@@ -395,20 +398,25 @@ function player_jump () {
             jump_count += 1
             sprite_player.startEffect(effects.fire, 100)
             timer.background(function () {
+                animation.stopAnimation(animation.AnimationTypes.All, sprite_player)
                 if (upside_down) {
-                    for (let image2 of player_rotations_flipped) {
-                        sprite_player.setImage(image2)
-                        pause(20)
-                    }
+                    animation.runImageAnimation(
+                    sprite_player,
+                    animation_player_rotations_flipped,
+                    20,
+                    false
+                    )
                 } else {
-                    for (let image2 of player_rotations) {
-                        sprite_player.setImage(image2)
-                        pause(20)
-                    }
+                    animation.runImageAnimation(
+                    sprite_player,
+                    animation_player_rotations,
+                    20,
+                    false
+                    )
                 }
             })
         }
-    } else {
+    } else if (mode == 1) {
         if (upside_down) {
             jump_sprite(sprite_player_hitbox, -8)
         } else {
@@ -430,12 +438,43 @@ function player_jump () {
             true
             )
         })
+    } else {
+        if (sprite_player_hitbox.isHittingTile(CollisionDirection.Top)) {
+            mode_2_target_vy = Math.abs(mode_2_target_vy)
+        } else if (sprite_player_hitbox.isHittingTile(CollisionDirection.Bottom)) {
+            mode_2_target_vy = Math.abs(mode_2_target_vy) * -1
+        } else {
+            mode_2_target_vy = mode_2_target_vy * -1
+        }
+        timer.background(function () {
+            index = 0
+            if (upside_down) {
+                for (let image2 of animation_player_rotations_flipped) {
+                    sprite_player.setImage(image2)
+                    pause(200 / (animation_player_rotations_flipped.length / 2))
+                    index += 1
+                    if (index == Math.ceil(animation_player_rotations_flipped.length / 2)) {
+                        break;
+                    }
+                }
+            } else {
+                for (let image2 of animation_player_rotations) {
+                    sprite_player.setImage(image2)
+                    pause(200 / (animation_player_rotations.length / 2))
+                    index += 1
+                    if (index == Math.ceil(animation_player_rotations.length / 2)) {
+                        break;
+                    }
+                }
+            }
+        })
     }
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`jump`, function (sprite, location) {
     player_jump()
 })
 let colliding_dirs = ""
+let index = 0
 let images_button_list_selected: Image[] = []
 let images_button_list: Image[] = []
 let sprite_map_progress: StatusBarSprite = null
@@ -443,8 +482,8 @@ let sprite_attempt_label: TextSprite = null
 let location: tiles.Location = null
 let sprite_flag: Sprite = null
 let curr_level = 0
-let player_rotations_flipped: Image[] = []
-let player_rotations: Image[] = []
+let animation_player_rotations_flipped: Image[] = []
+let animation_player_rotations: Image[] = []
 let sprite_player_wings: Sprite = null
 let animation_upside_down_flap_hard: Image[] = []
 let animation_upside_down_flap: Image[] = []
@@ -469,6 +508,7 @@ let in_splash = false
 let in_game = false
 let all_levels: tiles.WorldMap[] = []
 let splash_level: tiles.WorldMap = null
+let mode_2_target_vy = 0
 let jump_count = 0
 let NIGHT_MODE = false
 let MAX_JUMPS = 0
@@ -483,6 +523,7 @@ GRAVITY = 500
 MAX_JUMPS = 2
 NIGHT_MODE = false
 jump_count = 0
+mode_2_target_vy = 200
 splash_level = tiles.createSmallMap(tilemap`splash_level`)
 all_levels = [
 tiles.createSmallMap(tilemap`level_1`),
@@ -490,7 +531,8 @@ tiles.createSmallMap(tilemap`level_2`),
 tiles.createSmallMap(tilemap`level_3`),
 tiles.createSmallMap(tilemap`level_4`),
 tiles.createSmallMap(tilemap`level_5`),
-tiles.createSmallMap(tilemap`level_6`)
+tiles.createSmallMap(tilemap`level_6`),
+tiles.createSmallMap(tilemap`level_7`)
 ]
 in_game = false
 in_splash = true
@@ -653,6 +695,16 @@ timer.background(function () {
 game.onUpdate(function () {
     if (in_game || in_splash) {
         sprite_player_hitbox.vx = 100
+        if (mode == 2) {
+            sprite_player_hitbox.ay = 0
+            sprite_player_hitbox.vy = mode_2_target_vy
+        } else {
+            if (upside_down) {
+                sprite_player_hitbox.ay = GRAVITY * -1
+            } else {
+                sprite_player_hitbox.ay = GRAVITY
+            }
+        }
         if (!(spriteutils.isDestroyed(sprite_player_hitbox))) {
             spriteutils.placeAngleFrom(
             sprite_player,
