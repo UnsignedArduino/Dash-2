@@ -79,10 +79,12 @@ function make_player_visuals () {
     for (let index = 0; index <= Math.ceil(animation_player_rotations.length / 2); index++) {
         animation_player_rotate_first_half.push(animation_player_rotations[index])
     }
+    animation_player_rotate_first_half.push(assets.image`player_flipped`)
     animation_player_rotate_second_half = []
     for (let index = 0; index <= Math.ceil(animation_player_rotations.length / 2); index++) {
-        animation_player_rotate_second_half.push(animation_player_rotations[Math.ceil(animation_player_rotations.length / 2) + index])
+        animation_player_rotate_second_half.push(animation_player_rotations_flipped[index])
     }
+    animation_player_rotate_second_half.push(assets.image`player`)
     sprite_player_wings = sprites.create(assets.image`player_wings`, SpriteKind.Image)
     animation_original_flap = assets.animation`flap`
     animation_original_flap_hard = assets.animation`flap_hard`
@@ -460,14 +462,14 @@ function player_jump () {
                 animation.runImageAnimation(
                 sprite_player,
                 animation_player_rotate_second_half,
-                20,
+                40,
                 false
                 )
             } else {
                 animation.runImageAnimation(
                 sprite_player,
                 animation_player_rotate_first_half,
-                20,
+                40,
                 false
                 )
             }
@@ -484,7 +486,7 @@ let sprite_map_progress: StatusBarSprite = null
 let sprite_attempt_label: TextSprite = null
 let location: tiles.Location = null
 let sprite_flag: Sprite = null
-let curr_level: number = []
+let curr_level = 0
 let animation_player_rotate_second_half: Image[] = []
 let animation_player_rotate_first_half: Image[] = []
 let animation_player_rotations_flipped: Image[] = []
@@ -498,15 +500,15 @@ let animation_original_flap: Image[] = []
 let animation_flap: Image[] = []
 let sprite_player: Sprite = null
 let sprite_player_hitbox: Sprite = null
-let button_list_selected: number = []
+let button_list_selected = 0
 let sprites_button_list: Sprite[] = []
-let level_attempts: number = []
+let level_attempts = 0
 let menu: miniMenu.MenuSprite = null
 let menu_option_levels: miniMenu.MenuItem[] = []
-let menu_selected_level: number = []
-let menu_selected: number = []
+let menu_selected_level = 0
+let menu_selected = 0
 let sprite_button: Sprite = null
-let mode: number = []
+let mode = 0
 let upside_down = false
 let won = false
 let in_splash = false
@@ -514,11 +516,11 @@ let in_game = false
 let all_levels: tiles.WorldMap[] = []
 let splash_level: tiles.WorldMap = null
 let last_colliding_dirs = ""
-let mode_2_target_vy: number = []
-let jump_count: number = []
+let mode_2_target_vy = 0
+let jump_count = 0
 let NIGHT_MODE = false
-let MAX_JUMPS: number = []
-let GRAVITY: number = []
+let MAX_JUMPS = 0
+let GRAVITY = 0
 let DEBUG = false
 DEBUG = false
 stats.turnStats(true)
