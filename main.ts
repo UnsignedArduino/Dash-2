@@ -59,6 +59,7 @@ function update_player_visuals () {
         animation_flap_hard = animation_upside_down_flap_hard
     }
     sprite_player_wings.setFlag(SpriteFlag.Invisible, mode != 1)
+    sprite_player_arm.setFlag(SpriteFlag.Invisible, mode != 2)
     animation.runImageAnimation(
     sprite_player_wings,
     animation_flap,
@@ -67,6 +68,7 @@ function update_player_visuals () {
     )
 }
 function make_player_visuals () {
+    sprites.destroyAllSpritesOfKind(SpriteKind.Image)
     sprite_player = sprites.create(assets.image`player`, SpriteKind.Image)
     sprite_player.setFlag(SpriteFlag.Ghost, true)
     sprite_player.setFlag(SpriteFlag.Invisible, DEBUG)
@@ -85,13 +87,13 @@ function make_player_visuals () {
         animation_player_rotate_second_half.push(animation_player_rotations_flipped[index])
     }
     animation_player_rotate_second_half.push(assets.image`player`)
-    sprite_player_wings = sprites.create(assets.image`player_wings`, SpriteKind.Image)
     animation_original_flap = assets.animation`flap`
     animation_original_flap_hard = assets.animation`flap_hard`
     animation_upside_down_flap = assets.animation`flap_upside_down`
     animation_upside_down_flap_hard = assets.animation`flap_hard_upside_down`
     animation_flap = animation_original_flap
     animation_flap_hard = animation_original_flap_hard
+    sprite_player_wings = sprites.create(assets.image`player_wings`, SpriteKind.Image)
     animation.runImageAnimation(
     sprite_player_wings,
     animation_flap,
@@ -100,6 +102,10 @@ function make_player_visuals () {
     )
     sprite_player_wings.setFlag(SpriteFlag.Ghost, true)
     sprite_player_wings.setFlag(SpriteFlag.Invisible, true)
+    sprite_player_arm = sprites.create(assets.image`player_arm`, SpriteKind.Image)
+    sprite_player_arm.setFlag(SpriteFlag.Ghost, true)
+    sprite_player_arm.setFlag(SpriteFlag.Invisible, true)
+    sprite_player_arm.z = -2
     set_mode(0)
 }
 function set_level (level_num: number) {
@@ -491,6 +497,7 @@ let animation_player_rotate_second_half: Image[] = []
 let animation_player_rotate_first_half: Image[] = []
 let animation_player_rotations_flipped: Image[] = []
 let animation_player_rotations: Image[] = []
+let sprite_player_arm: Sprite = null
 let sprite_player_wings: Sprite = null
 let animation_upside_down_flap_hard: Image[] = []
 let animation_upside_down_flap: Image[] = []
@@ -727,6 +734,12 @@ game.onUpdate(function () {
             0,
             sprite_player_hitbox
             )
+            sprite_player_arm.x = sprite_player_hitbox.x
+            if (mode_2_target_vy < 0) {
+                sprite_player_arm.bottom = sprite_player_hitbox.y
+            } else {
+                sprite_player_arm.top = sprite_player_hitbox.y
+            }
             if (sprite_player_hitbox.isHittingTile(CollisionDirection.Left)) {
                 last_colliding_dirs = "L"
                 colliding_dirs = "" + colliding_dirs + "L"
@@ -748,6 +761,7 @@ game.onUpdate(function () {
             }
         } else {
             sprite_player_wings.setFlag(SpriteFlag.Invisible, true)
+            sprite_player_arm.setFlag(SpriteFlag.Invisible, true)
         }
     }
 })

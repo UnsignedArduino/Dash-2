@@ -54,6 +54,11 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "play_button_selected"
     },
+    "image12": {
+        "data": "hwQCAHgAAADMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw=",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "player_arm"
+    },
     "anim2": {
         "namespace": "myAnimations",
         "id": "anim2",
