@@ -75,14 +75,6 @@ function make_player_visuals () {
     animation_player_rotations.push(assets.image`player`)
     animation_player_rotations_flipped = scaling.createRotations(assets.image`player_flipped`, 10)
     animation_player_rotations_flipped.push(assets.image`player_flipped`)
-    animation_player_rotate_first_half = []
-    for (let index = 0; index <= Math.ceil(animation_player_rotations.length / 2); index++) {
-        animation_player_rotate_first_half.push(animation_player_rotations[index])
-    }
-    animation_player_rotate_second_half = []
-    for (let index = 0; index <= Math.ceil(animation_player_rotations.length / 2); index++) {
-        animation_player_rotate_second_half.push(animation_player_rotations[Math.ceil(animation_player_rotations.length / 2) + index])
-    }
     sprite_player_wings = sprites.create(assets.image`player_wings`, SpriteKind.Image)
     animation_original_flap = assets.animation`flap`
     animation_original_flap_hard = assets.animation`flap_hard`
@@ -447,29 +439,33 @@ function player_jump () {
             )
         })
     } else {
-        if (last_colliding_dirs.includes("U")) {
+        if (sprite_player_hitbox.isHittingTile(CollisionDirection.Top)) {
             mode_2_target_vy = Math.abs(mode_2_target_vy)
-        } else if (last_colliding_dirs.includes("D")) {
+        } else if (sprite_player_hitbox.isHittingTile(CollisionDirection.Bottom)) {
             mode_2_target_vy = Math.abs(mode_2_target_vy) * -1
         } else {
             mode_2_target_vy = mode_2_target_vy * -1
         }
         timer.background(function () {
-            animation.stopAnimation(animation.AnimationTypes.All, sprite_player)
-            if (mode_2_target_vy > 0) {
-                animation.runImageAnimation(
-                sprite_player,
-                animation_player_rotate_second_half,
-                20,
-                false
-                )
+            index = 0
+            if (upside_down) {
+                for (let image2 of animation_player_rotations_flipped) {
+                    sprite_player.setImage(image2)
+                    pause(200 / (animation_player_rotations_flipped.length / 2))
+                    index += 1
+                    if (index == Math.ceil(animation_player_rotations_flipped.length / 2)) {
+                        break;
+                    }
+                }
             } else {
-                animation.runImageAnimation(
-                sprite_player,
-                animation_player_rotate_first_half,
-                20,
-                false
-                )
+                for (let image2 of animation_player_rotations) {
+                    sprite_player.setImage(image2)
+                    pause(200 / (animation_player_rotations.length / 2))
+                    index += 1
+                    if (index == Math.ceil(animation_player_rotations.length / 2)) {
+                        break;
+                    }
+                }
             }
         })
     }
@@ -478,15 +474,14 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`jump`, function (sprite, loca
     player_jump()
 })
 let colliding_dirs = ""
+let index = 0
 let images_button_list_selected: Image[] = []
 let images_button_list: Image[] = []
 let sprite_map_progress: StatusBarSprite = null
 let sprite_attempt_label: TextSprite = null
 let location: tiles.Location = null
 let sprite_flag: Sprite = null
-let curr_level: number = []
-let animation_player_rotate_second_half: Image[] = []
-let animation_player_rotate_first_half: Image[] = []
+let curr_level = 0
 let animation_player_rotations_flipped: Image[] = []
 let animation_player_rotations: Image[] = []
 let sprite_player_wings: Sprite = null
@@ -498,27 +493,26 @@ let animation_original_flap: Image[] = []
 let animation_flap: Image[] = []
 let sprite_player: Sprite = null
 let sprite_player_hitbox: Sprite = null
-let button_list_selected: number = []
+let button_list_selected = 0
 let sprites_button_list: Sprite[] = []
-let level_attempts: number = []
+let level_attempts = 0
 let menu: miniMenu.MenuSprite = null
 let menu_option_levels: miniMenu.MenuItem[] = []
-let menu_selected_level: number = []
-let menu_selected: number = []
+let menu_selected_level = 0
+let menu_selected = 0
 let sprite_button: Sprite = null
-let mode: number = []
+let mode = 0
 let upside_down = false
 let won = false
 let in_splash = false
 let in_game = false
 let all_levels: tiles.WorldMap[] = []
 let splash_level: tiles.WorldMap = null
-let last_colliding_dirs = ""
-let mode_2_target_vy: number = []
-let jump_count: number = []
+let mode_2_target_vy = 0
+let jump_count = 0
 let NIGHT_MODE = false
-let MAX_JUMPS: number = []
-let GRAVITY: number = []
+let MAX_JUMPS = 0
+let GRAVITY = 0
 let DEBUG = false
 DEBUG = false
 stats.turnStats(true)
@@ -530,7 +524,6 @@ MAX_JUMPS = 2
 NIGHT_MODE = false
 jump_count = 0
 mode_2_target_vy = 200
-last_colliding_dirs = ""
 splash_level = tiles.createSmallMap(tilemap`splash_level`)
 all_levels = [
 tiles.createSmallMap(tilemap`level_1`),
@@ -725,23 +718,20 @@ game.onUpdate(function () {
             0,
             sprite_player_hitbox
             )
-            if (sprite_player_hitbox.isHittingTile(CollisionDirection.Left)) {
-                last_colliding_dirs = "L"
-                colliding_dirs = "" + colliding_dirs + "L"
-            }
-            if (sprite_player_hitbox.isHittingTile(CollisionDirection.Top)) {
-                last_colliding_dirs = "T"
-                colliding_dirs = "" + colliding_dirs + "U"
-            }
-            if (sprite_player_hitbox.isHittingTile(CollisionDirection.Right)) {
-                last_colliding_dirs = "R"
-                colliding_dirs = "" + colliding_dirs + "R"
-            }
-            if (sprite_player_hitbox.isHittingTile(CollisionDirection.Bottom)) {
-                last_colliding_dirs = "B"
-                colliding_dirs = "" + colliding_dirs + "D"
-            }
             if (DEBUG) {
+                colliding_dirs = ""
+                if (sprite_player_hitbox.isHittingTile(CollisionDirection.Left)) {
+                    colliding_dirs = "" + colliding_dirs + "L"
+                }
+                if (sprite_player_hitbox.isHittingTile(CollisionDirection.Top)) {
+                    colliding_dirs = "" + colliding_dirs + "U"
+                }
+                if (sprite_player_hitbox.isHittingTile(CollisionDirection.Right)) {
+                    colliding_dirs = "" + colliding_dirs + "R"
+                }
+                if (sprite_player_hitbox.isHittingTile(CollisionDirection.Bottom)) {
+                    colliding_dirs = "" + colliding_dirs + "D"
+                }
                 sprite_player_hitbox.sayText(colliding_dirs)
             }
         } else {
